@@ -1,45 +1,54 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
-import { NewAppScreen } from '@react-native/new-app-screen';
-import { StatusBar, StyleSheet, useColorScheme, View } from 'react-native';
 import {
+  initialWindowMetrics,
   SafeAreaProvider,
-  useSafeAreaInsets,
 } from 'react-native-safe-area-context';
+import { navigationRef } from './src/navigator/navigationUtilities';
+import React from 'react';
+import {
+  NavigationContainer,
+  NavigationContainerRef,
+} from '@react-navigation/native';
+import { StatusBar, View } from 'react-native';
 
-function App() {
-  const isDarkMode = useColorScheme() === 'dark';
+import Toast from 'react-native-toast-message';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { toastConfig } from '@/components';
+import AppNavigator from '@/navigator/AppNavigator';
+import { ThemeProvider } from '@/theme/ThemeProvider';
+
+const App = () => {
+  const linking = {
+    prefixes: ['tkg-props://', 'https://tkg-props.com'],
+    config: {
+      screens: {
+        Login: 'login',
+        DetailNews: 'detailNews/:id',
+      },
+    },
+  };
 
   return (
-    <SafeAreaProvider>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <AppContent />
-    </SafeAreaProvider>
+    <GestureHandlerRootView>
+      <ThemeProvider>
+        <SafeAreaProvider initialMetrics={initialWindowMetrics}>
+          <StatusBar
+            translucent
+            backgroundColor="transparent"
+            barStyle="light-content"
+          />
+          <NavigationContainer
+            ref={navigationRef as React.Ref<NavigationContainerRef<any>>}
+            linking={linking}
+            fallback={<View />}
+            onReady={() => {}}
+          >
+            <AppNavigator />
+          </NavigationContainer>
+          <Toast config={toastConfig} />
+        </SafeAreaProvider>
+      </ThemeProvider>
+    </GestureHandlerRootView>
   );
-}
-
-function AppContent() {
-  const safeAreaInsets = useSafeAreaInsets();
-
-  return (
-    <View style={styles.container}>
-      <NewAppScreen
-        templateFileName="App.tsx"
-        safeAreaInsets={safeAreaInsets}
-      />
-    </View>
-  );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});
+};
 
 export default App;
