@@ -11,6 +11,7 @@ module.exports = {
         },
       },
     ],
+    ["@babel/plugin-proposal-decorators", { "legacy": true }],
     'react-native-worklets/plugin',
   ],
 };

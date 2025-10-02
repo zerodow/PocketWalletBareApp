@@ -3,7 +3,7 @@ import {
   SafeAreaProvider,
 } from 'react-native-safe-area-context';
 import { navigationRef } from './src/navigator/navigationUtilities';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   NavigationContainer,
   NavigationContainerRef,
@@ -15,6 +15,8 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { toastConfig } from '@/components';
 import AppNavigator from '@/navigator/AppNavigator';
 import { ThemeProvider } from '@/theme/ThemeProvider';
+import { initI18n } from '@/i18n';
+import { loadDateFnsLocale } from '@/utils/formatDate';
 
 const App = () => {
   const linking = {
@@ -26,6 +28,18 @@ const App = () => {
       },
     },
   };
+
+  const [isI18nInitialized, setIsI18nInitialized] = useState(false);
+
+  useEffect(() => {
+    initI18n()
+      .then(() => setIsI18nInitialized(true))
+      .then(() => loadDateFnsLocale());
+  }, []);
+
+  if (!isI18nInitialized) {
+    return null;
+  }
 
   return (
     <GestureHandlerRootView>
@@ -42,7 +56,7 @@ const App = () => {
             fallback={<View />}
             onReady={() => {}}
           >
-            <AppNavigator />
+            {isI18nInitialized ? <AppNavigator /> : <View />}
           </NavigationContainer>
           <Toast config={toastConfig} />
         </SafeAreaProvider>

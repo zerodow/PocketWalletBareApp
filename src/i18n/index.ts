@@ -1,5 +1,5 @@
 import { I18nManager } from 'react-native';
-import * as Localization from 'expo-localization';
+import * as RNLocalize from 'react-native-localize';
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 
@@ -9,7 +9,7 @@ import vi from './vi';
 
 const fallbackLocale = 'en-US';
 
-const systemLocales = Localization.getLocales();
+const systemLocales = RNLocalize.getLocales();
 
 const resources = { en, vi };
 const supportedTags = Object.keys(resources);
@@ -21,7 +21,7 @@ const systemTagMatchesSupportedTags = (deviceTag: string) => {
   return supportedTags.includes(primaryTag);
 };
 
-const pickSupportedLocale: () => Localization.Locale | undefined = () => {
+const pickSupportedLocale: () => RNLocalize.Locale | undefined = () => {
   return systemLocales.find(locale =>
     systemTagMatchesSupportedTags(locale.languageTag),
   );
@@ -32,7 +32,7 @@ const locale = pickSupportedLocale();
 export let isRTL = false;
 
 // Need to set RTL ASAP to ensure the app is rendered correctly. Waiting for i18n to init is too late.
-if (locale?.languageTag && locale?.textDirection === 'rtl') {
+if (locale?.languageTag && locale?.isRTL) {
   I18nManager.allowRTL(true);
   isRTL = true;
 } else {
