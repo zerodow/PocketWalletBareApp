@@ -10,6 +10,7 @@ import {
 import { authService } from '@/services/authService';
 import { makeStyles } from '@/utils/makeStyles';
 import { translate } from '@/i18n/translate';
+import { changeLanguage, getCurrentLanguage } from '@/i18n';
 
 interface LoginFormData {
   email: string;
@@ -19,6 +20,7 @@ interface LoginFormData {
 const LoginScreen = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [currentLang, setCurrentLang] = useState(getCurrentLanguage());
   const styles = useStyles();
 
   const {
@@ -56,9 +58,23 @@ const LoginScreen = () => {
     }
   };
 
+  const toggleLanguage = () => {
+    const newLang = currentLang === 'en' ? 'vi' : 'en';
+    changeLanguage(newLang);
+    setCurrentLang(newLang);
+  };
+
   return (
     <SafeAreaWrapper>
       <View style={styles.container}>
+        <View style={styles.header}>
+          <BaseButton
+            text={currentLang === 'en' ? 'VI' : 'EN'}
+            onPress={toggleLanguage}
+            variant="outlined"
+            style={styles.languageButton}
+          />
+        </View>
         <TextView size="display" family="bold" style={styles.title}>
           {translate('loginScreen.title')}
         </TextView>
@@ -112,7 +128,11 @@ const LoginScreen = () => {
           {error && <TextView style={styles.errorText}>{error}</TextView>}
 
           <BaseButton
-            text={isLoading ? translate('loginScreen.signingInButton') : translate('loginScreen.signInButton')}
+            text={
+              isLoading
+                ? translate('loginScreen.signingInButton')
+                : translate('loginScreen.signInButton')
+            }
             onPress={handleSubmit(onSubmit)}
             disabled={isLoading}
             loading={isLoading}
@@ -141,6 +161,16 @@ const useStyles = makeStyles(theme => ({
     flex: 1,
     paddingHorizontal: theme.spacing.md,
     justifyContent: 'center',
+  },
+  header: {
+    position: 'absolute',
+    top: theme.spacing.lg,
+    right: theme.spacing.md,
+    zIndex: 1,
+  },
+  languageButton: {
+    minWidth: 50,
+    paddingHorizontal: theme.spacing.sm,
   },
   title: {
     textAlign: 'center',

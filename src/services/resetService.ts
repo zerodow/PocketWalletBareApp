@@ -1,6 +1,6 @@
-import { unifiedStorage } from "@/utils/storage/unifiedStorage"
-import { database } from "@/database"
-import { authService } from "./authService"
+import { unifiedStorage } from '@/storage';
+import { database } from '@/database';
+import { authService } from './authService';
 
 /**
  * Reset/cleanup operations for data management settings
@@ -11,7 +11,7 @@ export const resetService = {
    */
   async clearCacheSafe(): Promise<void> {
     // Placeholder: implement specific cache cleanup if added in future (e.g., image caches, temp files).
-    return
+    return;
   },
 
   /**
@@ -20,24 +20,24 @@ export const resetService = {
   async fullReset(): Promise<void> {
     try {
       // Logout to clear store state + auth storage
-      await authService.logout()
+      await authService.logout();
 
       // Clear settings and other MMKV state
-      unifiedStorage.settings.clearSettings()
-      unifiedStorage.base.clearAll()
+      unifiedStorage.settings.clearSettings();
+      unifiedStorage.base.clearAll();
 
-      // Clear secure tokens
-      await unifiedStorage.auth.tokens.clearAllTokens()
+      // Clear tokens (no-op since we're using MMKV only)
+      await unifiedStorage.tokens.clearAllTokens();
 
       // Reset database
       await database.write(async () => {
         // Unsafe reset wipes all tables; acceptable for explicit reset
         // @ts-ignore - method exists on adapter DB
-        await database.unsafeResetDatabase()
-      })
+        await database.unsafeResetDatabase();
+      });
     } catch (e) {
-      console.error("Full reset error", e)
-      throw e
+      console.error('Full reset error', e);
+      throw e;
     }
   },
-}
+};

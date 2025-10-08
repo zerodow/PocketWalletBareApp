@@ -62,7 +62,7 @@ _Updated: September 01, 2025_
 
 ### MVP (target 4–6 weeks)
 
-1. **Auth & Lock:** Supabase Auth; app lock with PIN/biometrics.
+1. **Auth & Lock:** Mock authentication with MMKV storage; app lock with PIN/biometrics.
 2. **Transactions:** Add/edit/delete income & expense; notes; timestamp; category.
 3. **Categories:** 10 predefined + custom (name + emoji/icon).
 4. **Dashboard:** Month totals (income, expense), **savings %** (income−expense)/income.
@@ -120,7 +120,7 @@ Notes:
 ## 7) Architecture & APIs (MVP)
 
 **Frontend.** React Native (Expo), TypeScript, Zustand state, WatermelonDB offline store.
-**Backend.** Node.js + Express; Supabase (Auth/Postgres/Storage); Render hosting.
+**Backend.** Node.js + Express; MMKV local storage; Render hosting.
 
 **Cloud sync scope (MVP).**
 
@@ -160,7 +160,7 @@ GET    /v1/splits/:id               → public read (no auth), returns perPerson
 
 **Data in transit.** TLS 1.3 for all API traffic; HSTS on backend.
 
-**Auth.** Supabase Auth (email/pass or OAuth when available); JWT access (24h) + refresh rotation; app‑level PIN/biometric lock.
+**Auth.** Mock authentication (email/pass validation); MMKV storage; app‑level PIN/biometric lock.
 
 **Secrets.** No secrets in client; use env on server; rotate on suspicion; least privilege DB roles.
 
@@ -229,7 +229,7 @@ _(Note: consult legal guidance before public release; expand to GDPR later if ta
 - **Crash rate** < **1%** of sessions (weekly). Alert at 0.7%.
 - **API p95 latency** < **2s**; alert at 1.7s.
 - **Sync success** > **95%**; alert at 92%.
-- **Supabase storage/DB**: warn at **80%**, block new writes at **95%** with friendly UI.
+- **MMKV storage**: warn at **80%**, block new writes at **95%** with friendly UI.
 
 **Release gates (MVP).**
 

@@ -221,7 +221,7 @@ src/
 
 ### Free Tier Limitations
 
-- **Supabase**: 500MB database, 1GB storage, 5GB bandwidth/month
+- **MMKV Storage**: Local encrypted storage with no cloud dependencies
 - **Render.com**: 750 hours/month, sleeps after 15 minutes inactivity
 - **Expo**: 30 EAS builds/month
 
@@ -234,7 +234,7 @@ src/
 
 ### Scaling Considerations
 
-- **Database**: Migration path to larger Supabase tier
+- **Database**: Migration path to cloud database when needed
 - **Backend**: Container orchestration for horizontal scaling
 - **Mobile**: App store optimization for wider distribution
 - **Monitoring**: Implementation of comprehensive analytics

@@ -7,11 +7,14 @@ import { initReactI18next } from 'react-i18next';
 import en, { Translations } from './en';
 import vi from './vi';
 
-const fallbackLocale = 'en-US';
+const fallbackLocale = 'en';
 
 const systemLocales = RNLocalize.getLocales();
 
-const resources = { en, vi };
+const resources = {
+  en: { translation: en },
+  vi: { translation: vi },
+};
 const supportedTags = Object.keys(resources);
 
 // Checks to see if the device locale matches any of the supported locales
@@ -57,6 +60,16 @@ export const initI18n = async () => {
 // Re-export the i18n instance for runtime language switching
 export { i18n };
 
+// Language switching function
+export const changeLanguage = (language: 'en' | 'vi') => {
+  return i18n.changeLanguage(language);
+};
+
+// Get current language
+export const getCurrentLanguage = () => {
+  return i18n.language;
+};
+
 /**
  * Builds up valid keypaths for translations.
  */
@@ -88,6 +101,6 @@ type RecursiveKeyOfHandleValue<
   ? Text
   : TValue extends object
   ? IsFirstLevel extends true
-    ? Text | `${Text}:${RecursiveKeyOfInner<TValue>}`
+    ? Text | `${Text}.${RecursiveKeyOfInner<TValue>}`
     : Text | `${Text}.${RecursiveKeyOfInner<TValue>}`
   : Text;

@@ -2,13 +2,8 @@ import {
   initialWindowMetrics,
   SafeAreaProvider,
 } from 'react-native-safe-area-context';
-import { navigationRef } from './src/navigator/navigationUtilities';
 import React, { useEffect, useState } from 'react';
-import {
-  NavigationContainer,
-  NavigationContainerRef,
-} from '@react-navigation/native';
-import { StatusBar, View } from 'react-native';
+import { StatusBar } from 'react-native';
 
 import Toast from 'react-native-toast-message';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -20,11 +15,32 @@ import { loadDateFnsLocale } from '@/utils/formatDate';
 
 const App = () => {
   const linking = {
-    prefixes: ['tkg-props://', 'https://tkg-props.com'],
+    prefixes: ['pocketwallet://', 'https://pocketwallet.com'],
     config: {
       screens: {
-        Login: 'login',
-        DetailNews: 'detailNews/:id',
+        Auth: {
+          screens: {
+            Login: 'login',
+            Register: 'register',
+          },
+        },
+        Main: {
+          screens: {
+            TabNavigator: {
+              screens: {
+                HomeTab: 'home',
+                TransactionsTab: 'transactions',
+                AddTab: 'add',
+                AnalyticsTab: 'analytics',
+                SettingsTab: 'settings',
+              },
+            },
+            TransactionDetail: 'transaction/:transactionId',
+            CategoryList: 'categories',
+            CategoryEdit: 'category/edit',
+            Trash: 'trash',
+          },
+        },
       },
     },
   };
@@ -42,7 +58,7 @@ const App = () => {
   }
 
   return (
-    <GestureHandlerRootView>
+    <GestureHandlerRootView style={{ flex: 1 }}>
       <ThemeProvider>
         <SafeAreaProvider initialMetrics={initialWindowMetrics}>
           <StatusBar
@@ -50,14 +66,7 @@ const App = () => {
             backgroundColor="transparent"
             barStyle="light-content"
           />
-          <NavigationContainer
-            ref={navigationRef as React.Ref<NavigationContainerRef<any>>}
-            linking={linking}
-            fallback={<View />}
-            onReady={() => {}}
-          >
-            {isI18nInitialized ? <AppNavigator /> : <View />}
-          </NavigationContainer>
+          <AppNavigator linking={linking} />
           <Toast config={toastConfig} />
         </SafeAreaProvider>
       </ThemeProvider>

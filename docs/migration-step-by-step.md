@@ -1,6 +1,7 @@
 # Step-by-Step Migration Guide
 
 ## Prerequisites
+
 - Node.js 20+
 - React Native CLI installed globally
 - Android Studio and Xcode set up
@@ -9,6 +10,7 @@
 ## Phase 1: New Project Creation
 
 ### Step 1: Create New Bare React Native Project
+
 ```bash
 cd /Users/MinhDuc/Documents
 npx react-native@latest init PocketWalletAppBare --version 0.79.4
@@ -16,6 +18,7 @@ cd PocketWalletAppBare
 ```
 
 ### Step 2: Copy Source Code
+
 ```bash
 # Copy main application code
 cp -r ../PocketWalletApp/app/ ./src/
@@ -35,6 +38,7 @@ cp ../PocketWalletApp/metro.config.js ./metro.config.js.backup
 ## Phase 2: Configuration Updates
 
 ### Step 3: Update tsconfig.json
+
 ```json
 {
   "extends": "@react-native/typescript-config/tsconfig.json",
@@ -65,8 +69,9 @@ cp ../PocketWalletApp/metro.config.js ./metro.config.js.backup
 ```
 
 ### Step 4: Update metro.config.js
+
 ```javascript
-const {getDefaultConfig, mergeConfig} = require('@react-native/metro-config');
+const { getDefaultConfig, mergeConfig } = require('@react-native/metro-config');
 
 const config = {
   transformer: {
@@ -86,18 +91,20 @@ module.exports = mergeConfig(getDefaultConfig(__dirname), config);
 ```
 
 ### Step 5: Update babel.config.js
+
 ```javascript
 module.exports = {
   presets: ['module:metro-react-native-babel-preset'],
-  plugins: [['@babel/plugin-proposal-decorators', {legacy: true}]],
+  plugins: [['@babel/plugin-proposal-decorators', { legacy: true }]],
 };
 ```
 
 ### Step 6: Update index.js Entry Point
+
 ```javascript
-import {AppRegistry} from 'react-native';
-import {App} from './src/app';
-import {name as appName} from './app.json';
+import { AppRegistry } from 'react-native';
+import { App } from './src/app';
+import { name as appName } from './app.json';
 
 AppRegistry.registerComponent(appName, () => App);
 ```
@@ -105,6 +112,7 @@ AppRegistry.registerComponent(appName, () => App);
 ## Phase 3: Dependency Migration
 
 ### Step 7: Update package.json
+
 ```bash
 # Remove Expo dependencies
 yarn remove expo expo-secure-store expo-haptics expo-font expo-av expo-local-authentication expo-localization expo-linking expo-splash-screen expo-system-ui expo-application @expo-google-fonts/space-grotesk expo-dev-client @expo/metro-runtime babel-preset-expo jest-expo eslint-config-expo
@@ -117,6 +125,7 @@ yarn add -D metro-react-native-babel-preset @react-native/eslint-config @react-n
 ```
 
 ### Step 8: Update Scripts in package.json
+
 ```json
 {
   "scripts": {
@@ -136,13 +145,15 @@ yarn add -D metro-react-native-babel-preset @react-native/eslint-config @react-n
 ## Phase 4: Code Updates
 
 ### Step 9: Update Secure Storage
+
 Replace content in `src/utils/storage/_deprecated/secureStorage.ts`:
+
 ```typescript
 import Keychain from 'react-native-keychain';
 
-const TOKEN_KEY = "supabase_token"
-const REFRESH_TOKEN_KEY = "supabase_refresh_token"
-const PIN_KEY = "app_pin"
+const TOKEN_KEY = 'auth_token';
+const REFRESH_TOKEN_KEY = 'auth_refresh_token';
+const PIN_KEY = 'app_pin';
 
 export const secureStorage = {
   getItem: async (key: string): Promise<string | null> => {
@@ -153,7 +164,7 @@ export const secureStorage = {
       }
       return null;
     } catch (error) {
-      console.error("Error getting secure storage item:", error);
+      console.error('Error getting secure storage item:', error);
       return null;
     }
   },
@@ -162,7 +173,7 @@ export const secureStorage = {
     try {
       await Keychain.setInternetCredentials(key, key, value);
     } catch (error) {
-      console.error("Error setting secure storage item:", error);
+      console.error('Error setting secure storage item:', error);
     }
   },
 
@@ -170,14 +181,16 @@ export const secureStorage = {
     try {
       await Keychain.resetInternetCredentials(key);
     } catch (error) {
-      console.error("Error removing secure storage item:", error);
+      console.error('Error removing secure storage item:', error);
     }
   },
 };
 ```
 
 ### Step 10: Update Import Statements
+
 Search and replace throughout codebase:
+
 - `from "expo-haptics"` → `from "react-native-haptic-feedback"`
 - `from "expo-linking"` → `from "@react-native-community/linking"`
 - `from "expo-localization"` → `from "react-native-localize"`
@@ -185,11 +198,14 @@ Search and replace throughout codebase:
 ## Phase 5: Native Configuration
 
 ### Step 11: iOS Setup
+
 1. **Add fonts to iOS bundle**:
+
    - Copy Space Grotesk fonts to `ios/PocketWalletAppBare/Fonts/`
    - Update `Info.plist` with font names
 
 2. **Update Info.plist permissions**:
+
 ```xml
 <key>NSMicrophoneUsageDescription</key>
 <string>This app needs access to the microphone to enable voice input for transaction recording.</string>
@@ -198,15 +214,19 @@ Search and replace throughout codebase:
 ```
 
 3. **Install iOS dependencies**:
+
 ```bash
 cd ios && pod install && cd ..
 ```
 
 ### Step 12: Android Setup
+
 1. **Add fonts to Android**:
+
    - Copy fonts to `android/app/src/main/assets/fonts/`
 
 2. **Update AndroidManifest.xml**:
+
 ```xml
 <uses-permission android:name="android.permission.RECORD_AUDIO" />
 ```
@@ -214,6 +234,7 @@ cd ios && pod install && cd ..
 ## Phase 6: Testing
 
 ### Step 13: Test Build
+
 ```bash
 # Test Android
 npx react-native run-android
@@ -223,6 +244,7 @@ npx react-native run-ios
 ```
 
 ### Step 14: Test Features
+
 - [ ] App launches successfully
 - [ ] Navigation works
 - [ ] Voice recording functions
@@ -233,13 +255,16 @@ npx react-native run-ios
 ## Troubleshooting
 
 ### Common Issues
+
 1. **Metro bundler errors**: Clear cache with `npx react-native start --reset-cache`
 2. **iOS build errors**: Clean and rebuild with `cd ios && xcodebuild clean && cd ..`
 3. **Android build errors**: Clean with `cd android && ./gradlew clean && cd ..`
 4. **Font loading issues**: Verify fonts are properly added to native bundles
 
 ### Rollback Plan
+
 If migration fails:
+
 1. Keep original project intact
 2. Test specific features individually
 3. Migrate features incrementally if needed
