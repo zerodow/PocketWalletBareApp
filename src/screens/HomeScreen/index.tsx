@@ -83,13 +83,12 @@ const HomeScreen: FC<HomeScreenProps> = ({ navigation }) => {
 
             {/* Total Balance */}
             <View style={styles.balanceSection}>
-              <TextView size="body" color="#FFFFFF" style={styles.balanceLabel}>
+              <TextView size="body" style={styles.balanceLabel}>
                 {translate('homeScreen.totalBalance')}
               </TextView>
               <TextView
                 size="display"
                 weight="bold"
-                color="#FFFFFF"
                 style={styles.balanceAmount}
               >
                 {formatAmount(totalBalance)}
@@ -105,7 +104,7 @@ const HomeScreen: FC<HomeScreenProps> = ({ navigation }) => {
               <Icon
                 icon="add"
                 size={20}
-                color="#9333EA"
+                color={styles.addIcon.color}
                 style={{ transform: [{ rotate: '45deg' }] }}
               />
             </TouchableOpacity>
@@ -215,16 +214,23 @@ export default HomeScreen;
 const useStyles = makeStyles(theme => ({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.primary,
+    backgroundColor: theme.isDark
+      ? theme.colors.background
+      : theme.colors.primary,
   },
 
   // Purple Header Styles
   purpleHeader: {
-    backgroundColor: theme.colors.primary,
+    backgroundColor: theme.isDark ? theme.colors.surface : theme.colors.primary,
     paddingHorizontal: theme.spacing.lg,
     paddingBottom: theme.spacing.lg,
     borderBottomLeftRadius: theme.spacing.xl,
     borderBottomRightRadius: theme.spacing.xl,
+    // Add subtle elevation for dark mode
+    ...(theme.isDark && {
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.border,
+    }),
   },
 
   headerContent: {
@@ -238,13 +244,15 @@ const useStyles = makeStyles(theme => ({
     width: theme.spacing.xxxl,
     height: theme.spacing.xxxl,
     borderRadius: theme.spacing.lg,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: theme.isDark
+      ? theme.colors.primary
+      : theme.colors.onPrimary,
     justifyContent: 'center',
     alignItems: 'center',
   },
 
   avatarText: {
-    color: '#9333EA',
+    color: theme.isDark ? theme.colors.onPrimary : theme.colors.primary,
   },
 
   balanceSection: {
@@ -254,28 +262,51 @@ const useStyles = makeStyles(theme => ({
   },
 
   balanceLabel: {
-    opacity: 0.8,
+    color: theme.isDark ? theme.colors.textDim : theme.colors.onPrimary,
+    opacity: 0.9,
     marginBottom: theme.spacing.xxs,
   },
 
   balanceAmount: {
+    color: theme.isDark ? theme.colors.text : theme.colors.onPrimary,
     lineHeight: theme.spacing.xxxl + theme.spacing.xxs,
+  },
+
+  addIcon: {
+    color: theme.isDark ? theme.colors.onPrimary : theme.colors.primary,
   },
 
   addButton: {
     width: theme.spacing.xxxl,
     height: theme.spacing.xxxl,
     borderRadius: theme.spacing.lg,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: theme.isDark
+      ? theme.colors.primary
+      : theme.colors.onPrimary,
     justifyContent: 'center',
     alignItems: 'center',
+    // Add subtle shadow for better visibility
+    ...(theme.isDark && {
+      shadowColor: theme.colors.primary,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.3,
+      shadowRadius: 4,
+      elevation: 4,
+    }),
   },
 
   // Budget Card Styles
   budgetCard: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: theme.isDark
+      ? theme.colors.background
+      : theme.colors.onPrimary,
     borderRadius: theme.spacing.md,
     padding: theme.spacing.lg,
+    // Add border for dark mode
+    ...(theme.isDark && {
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+    }),
   },
 
   budgetTitle: {

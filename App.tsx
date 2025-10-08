@@ -11,6 +11,8 @@ import { toastConfig } from '@/components';
 import AppNavigator from '@/navigator/AppNavigator';
 import { ThemeProvider } from '@/theme/ThemeProvider';
 import { initI18n } from '@/i18n';
+import { useAppStore } from '@/store/appStore';
+import type { ColorMode } from '@/theme';
 import { loadDateFnsLocale } from '@/utils/formatDate';
 
 const App = () => {
@@ -46,6 +48,7 @@ const App = () => {
   };
 
   const [isI18nInitialized, setIsI18nInitialized] = useState(false);
+  const themeMode = useAppStore(state => state.themeMode);
 
   useEffect(() => {
     initI18n()
@@ -57,14 +60,22 @@ const App = () => {
     return null;
   }
 
+  // Determine the theme mode to pass to ThemeProvider
+  const forceMode: ColorMode | undefined =
+    themeMode === 'system' ? undefined : themeMode;
+
+  // Determine status bar style based on theme mode
+  const statusBarStyle =
+    forceMode === 'dark' ? 'light-content' : 'dark-content';
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <ThemeProvider>
+      <ThemeProvider forceMode={forceMode}>
         <SafeAreaProvider initialMetrics={initialWindowMetrics}>
           <StatusBar
             translucent
             backgroundColor="transparent"
-            barStyle="light-content"
+            barStyle={statusBarStyle}
           />
           <AppNavigator linking={linking} />
           <Toast config={toastConfig} />

@@ -11,6 +11,7 @@ import {
 import { Icon } from '@/components';
 import { useTheme } from '@/theme';
 import { makeStyles } from '@/utils/makeStyles';
+import { translate } from '@/i18n/translate';
 import type { TabParamList } from './types';
 import { tabScreenOptions, SCREEN_NAME } from './config';
 
@@ -77,18 +78,18 @@ export function TabNavigator() {
         name={SCREEN_NAME.HomeTab}
         component={HomeScreen}
         options={{
-          title: 'Home',
+          title: translate('tabs.home'),
           tabBarIcon: HomeIcon,
-          tabBarAccessibilityLabel: 'Home tab, 1 of 5',
+          tabBarAccessibilityLabel: translate('tabs.home'),
         }}
       />
       <Tab.Screen
         name={SCREEN_NAME.TransactionsTab}
         component={TransactionsTabScreen}
         options={{
-          title: 'Transactions',
+          title: translate('tabs.transactions'),
           tabBarIcon: TransactionsIcon,
-          tabBarAccessibilityLabel: 'Transactions tab, 2 of 5',
+          tabBarAccessibilityLabel: translate('tabs.transactions'),
         }}
       />
       <Tab.Screen
@@ -98,25 +99,25 @@ export function TabNavigator() {
           title: '',
           tabBarIcon: CenterTabIcon,
           tabBarButton: CenterTabButton,
-          tabBarAccessibilityLabel: 'Add new transaction, center tab, 3 of 5',
+          tabBarAccessibilityLabel: translate('tabs.add'),
         }}
       />
       <Tab.Screen
         name={SCREEN_NAME.AnalyticsTab}
         component={AnalyticsTabScreen}
         options={{
-          title: 'Analytics',
+          title: translate('tabs.analytics'),
           tabBarIcon: AnalyticsIcon,
-          tabBarAccessibilityLabel: 'Analytics tab, 4 of 5',
+          tabBarAccessibilityLabel: translate('tabs.analytics'),
         }}
       />
       <Tab.Screen
         name={SCREEN_NAME.SettingsTab}
         component={SettingsTabScreen}
         options={{
-          title: 'Settings',
+          title: translate('tabs.settings'),
           tabBarIcon: SettingsIcon,
-          tabBarAccessibilityLabel: 'Settings tab, 5 of 5',
+          tabBarAccessibilityLabel: translate('tabs.settings'),
         }}
       />
     </Tab.Navigator>

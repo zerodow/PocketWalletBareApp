@@ -6,6 +6,13 @@ const vi = {
     back: 'Quay lại',
     logOut: 'Đăng xuất',
   },
+  tabs: {
+    home: 'Trang Chủ',
+    transactions: 'Giao Dịch',
+    add: 'Thêm',
+    analytics: 'Thống Kê',
+    settings: 'Cài Đặt',
+  },
   errorScreen: {
     title: 'Đã xảy ra lỗi!',
     friendlySubtitle: 'Có lỗi xảy ra. Vui lòng thử lại.',
@@ -54,9 +61,33 @@ const vi = {
     tapToAddTransaction: 'Nhấn + để thêm giao dịch đầu tiên',
   },
   dashboardScreen: {
-    title: 'Bảng Điều Khiển',
-    subtitle:
-      'Mẫu bảng điều khiển phân tích - triển khai biểu đồ và thống kê của bạn tại đây',
+    title: 'Tổng Quan',
+    subtitle: 'Theo dõi chi tiêu và thu nhập của bạn',
+    // KPI Cards
+    totalIncome: 'TỔNG THU NHẬP',
+    totalExpense: 'TỔNG CHI TIÊU',
+    savings: 'TIẾT KIỆM',
+    // Charts
+    dailySpending: 'Chi Tiêu Hàng Ngày',
+    categoryBreakdown: 'Phân Tích Theo Danh Mục',
+    // Empty states
+    noExpenses: 'Chưa có chi tiêu',
+    startAddingTransactions: 'Bắt đầu thêm giao dịch để xem thống kê',
+    noData: 'Chưa có dữ liệu',
+    noDataForMonth: 'Tháng {{month}} chưa có giao dịch nào',
+    addTransaction: 'Thêm Giao Dịch',
+    // Monthly summary
+    monthlySummary: 'Tổng Kết Tháng',
+    increased: 'Tăng ',
+    decreased: 'Giảm ',
+    savingsRate: 'Tỷ lệ tiết kiệm',
+    // Error states
+    error: 'Lỗi',
+    retry: 'Thử Lại',
+    // Currency formatting
+    billion: ' tỷ',
+    million: ' triệu',
+    thousand: ' nghìn',
   },
   quickAddScreen: {
     title: 'Thêm Nhanh',
@@ -84,8 +115,44 @@ const vi = {
   },
   settingsScreen: {
     title: 'Cài Đặt',
-    subtitle:
-      'Mẫu cài đặt ứng dụng - triển khai các tùy chọn cài đặt của bạn tại đây',
+    subtitle: 'Quản lý tùy chọn ứng dụng và dữ liệu',
+    // App Preferences
+    appPreferences: 'Tuỳ chọn ứng dụng',
+    theme: 'Chủ đề',
+    themeSystem: 'Hệ thống',
+    themeLight: 'Sáng',
+    themeDark: 'Tối',
+    language: 'Ngôn ngữ',
+    languageEnglish: 'English',
+    languageVietnamese: 'Tiếng Việt',
+    currency: 'Tiền tệ',
+    defaultTransactionType: 'Loại GD mặc định',
+    transactionTypeIncome: 'Thu',
+    transactionTypeExpense: 'Chi',
+    // Privacy & Security
+    privacySecurity: 'Quyền riêng tư & Bảo mật',
+    appLock: 'Khóa ứng dụng (Sắp ra mắt)',
+    // Data Management
+    dataManagement: 'Quản lý dữ liệu',
+    dataStats: 'Hạng mục: {{categoryCount}} • Giao dịch: {{txCount}}',
+    clearCache: 'Xoá cache',
+    resetApp: 'Đặt lại ứng dụng',
+    // Sync
+    sync: 'Đồng bộ (Sắp ra mắt)',
+    syncDescription: 'Tính năng đồng bộ đa thiết bị sẽ sớm có mặt.',
+    // About
+    about: 'Thông tin',
+    appInfo: '{{name}} • v{{version}} ({{build}})',
+    // Alerts
+    languageChanged: 'Đã chọn ngôn ngữ {{language}}',
+    currencyChanged: 'Đã chọn tiền tệ {{currency}}',
+    clearCacheTitle: 'Xóa cache',
+    clearCacheMessage: 'Thao tác này chỉ xóa dữ liệu tạm thời.',
+    clearCacheSuccess: 'Đã xóa cache.',
+    resetAppTitle: 'Đặt lại ứng dụng',
+    resetAppMessage:
+      'Thao tác này sẽ xóa vĩnh viễn tất cả dữ liệu cục bộ. Hãy sao lưu trước.',
+    resetAppSuccess: 'Đặt lại hoàn tất. Vui lòng khởi động lại ứng dụng.',
   },
   transactionDetailScreen: {
     title: 'Chi Tiết Giao Dịch',

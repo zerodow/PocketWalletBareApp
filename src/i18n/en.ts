@@ -6,6 +6,13 @@ const en = {
     back: 'Back',
     logOut: 'Log Out',
   },
+  tabs: {
+    home: 'Home',
+    transactions: 'Transactions',
+    add: 'Add',
+    analytics: 'Analytics',
+    settings: 'Settings',
+  },
   errorScreen: {
     title: 'Something went wrong!',
     friendlySubtitle: 'An error has occurred. Please try again.',
@@ -55,8 +62,32 @@ const en = {
   },
   dashboardScreen: {
     title: 'Dashboard',
-    subtitle:
-      'Analytics dashboard placeholder - implement your charts and statistics here',
+    subtitle: 'Track your spending and income',
+    // KPI Cards
+    totalIncome: 'TOTAL INCOME',
+    totalExpense: 'TOTAL EXPENSE',
+    savings: 'SAVINGS',
+    // Charts
+    dailySpending: 'Daily Spending',
+    categoryBreakdown: 'Category Breakdown',
+    // Empty states
+    noExpenses: 'No expenses yet',
+    startAddingTransactions: 'Start adding transactions to see statistics',
+    noData: 'No data available',
+    noDataForMonth: 'No transactions for {{month}}',
+    addTransaction: 'Add Transaction',
+    // Monthly summary
+    monthlySummary: 'Monthly Summary',
+    increased: 'Increased ',
+    decreased: 'Decreased ',
+    savingsRate: 'Savings rate',
+    // Error states
+    error: 'Error',
+    retry: 'Try Again',
+    // Currency formatting
+    billion: ' billion',
+    million: ' million',
+    thousand: ' thousand',
   },
   quickAddScreen: {
     title: 'Quick Add',
@@ -84,7 +115,44 @@ const en = {
   },
   settingsScreen: {
     title: 'Settings',
-    subtitle: 'App settings placeholder - implement your settings options here',
+    subtitle: 'Manage your app preferences and data',
+    // App Preferences
+    appPreferences: 'App Preferences',
+    theme: 'Theme',
+    themeSystem: 'System',
+    themeLight: 'Light',
+    themeDark: 'Dark',
+    language: 'Language',
+    languageEnglish: 'English',
+    languageVietnamese: 'Tiếng Việt',
+    currency: 'Currency',
+    defaultTransactionType: 'Default Transaction Type',
+    transactionTypeIncome: 'Income',
+    transactionTypeExpense: 'Expense',
+    // Privacy & Security
+    privacySecurity: 'Privacy & Security',
+    appLock: 'App Lock (Coming Soon)',
+    // Data Management
+    dataManagement: 'Data Management',
+    dataStats: 'Categories: {{categoryCount}} • Transactions: {{txCount}}',
+    clearCache: 'Clear Cache',
+    resetApp: 'Reset App',
+    // Sync
+    sync: 'Sync (Coming Soon)',
+    syncDescription: 'Multi-device sync feature coming soon.',
+    // About
+    about: 'About',
+    appInfo: '{{name}} • v{{version}} ({{build}})',
+    // Alerts
+    languageChanged: 'Language set to {{language}}',
+    currencyChanged: 'Currency set to {{currency}}',
+    clearCacheTitle: 'Clear Cache',
+    clearCacheMessage: 'This will clear temporary data only.',
+    clearCacheSuccess: 'Cache cleared.',
+    resetAppTitle: 'Reset App',
+    resetAppMessage:
+      'This will permanently delete all local data. Make sure to back up first.',
+    resetAppSuccess: 'Reset complete. Please restart the app.',
   },
   transactionDetailScreen: {
     title: 'Transaction Detail',

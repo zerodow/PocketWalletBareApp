@@ -74,15 +74,20 @@ const useStyles = makeStyles(theme => ({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: theme.colors.surface,
     borderRadius: theme.spacing.sm,
     padding: theme.spacing.md,
     marginBottom: theme.spacing.sm,
-    shadowColor: '#000',
+    shadowColor: theme.isDark ? theme.colors.primary : '#000',
     shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
+    shadowOpacity: theme.isDark ? 0.1 : 0.05,
     shadowRadius: theme.spacing.xxs,
     elevation: 2,
+    // Add border for dark mode
+    ...(theme.isDark && {
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+    }),
   },
 
   icon: {
@@ -112,10 +117,10 @@ const useStyles = makeStyles(theme => ({
   },
 
   positiveAmount: {
-    color: '#10B981',
+    color: theme.colors.success,
   },
 
   negativeAmount: {
-    color: '#EF4444',
+    color: theme.colors.error,
   },
 }));
