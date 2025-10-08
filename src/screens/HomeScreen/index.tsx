@@ -63,7 +63,10 @@ const HomeScreen: FC<HomeScreenProps> = ({ navigation }) => {
 
   return (
     <SafeAreaWrapper top={false}>
-      <ScrollView style={[styles.container, { paddingTop: top }]}>
+      <ScrollView
+        style={[styles.container, { paddingTop: top }]}
+        contentContainerStyle={styles.scrollContent}
+      >
         {/* Purple Header */}
         <View style={styles.purpleHeader}>
           {/* Header Content */}
@@ -219,6 +222,10 @@ const useStyles = makeStyles(theme => ({
       : theme.colors.primary,
   },
 
+  scrollContent: {
+    flexGrow: 1,
+  },
+
   // Purple Header Styles
   purpleHeader: {
     backgroundColor: theme.isDark ? theme.colors.surface : theme.colors.primary,
@@ -362,10 +369,11 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.colors.background,
     paddingHorizontal: theme.spacing.lg,
     paddingTop: theme.spacing.lg,
+    paddingBottom: theme.spacing.xl,
   },
 
   section: {
-    marginBottom: theme.spacing.xl,
+    flex: 1,
   },
 
   sectionHeader: {

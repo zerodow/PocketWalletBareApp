@@ -67,7 +67,7 @@ export const useTransactionPagination = (
         type: (record.amountMinorUnits >= 0
           ? 'income'
           : 'expense') as TransactionType,
-        description: record.description || 'Không có mô tả',
+        description: record.description,
         date: record.occurredAt || new Date().getTime(),
         categoryName: categoryMap.get(record.categoryId) || 'Danh mục',
       };

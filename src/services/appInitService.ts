@@ -1,8 +1,7 @@
-import { authService } from "./authService"
-import { settingsService } from "./settingsService"
-import { categorySeedService } from "./categorySeedService"
-import { useAppStore } from "@/store/appStore"
-import { devDataSeedService } from "./devDataSeedService" // Gemini_add
+import { authService } from './authService';
+import { settingsService } from './settingsService';
+import { categorySeedService } from './categorySeedService';
+import { useAppStore } from '@/store/appStore';
 
 /**
  * App initialization service that handles startup hydration
@@ -14,25 +13,25 @@ export const appInitService = {
   initializeApp: async (): Promise<void> => {
     try {
       // Hydrate auth state
-      authService.hydrateAuthFromStorage()
+      authService.hydrateAuthFromStorage();
 
       // Hydrate settings
-      settingsService.hydrateSettingsFromStorage()
+      settingsService.hydrateSettingsFromStorage();
 
       // Seed default categories (idempotent)
-      await categorySeedService.seedDefaultCategories()
+      await categorySeedService.seedDefaultCategories();
 
       // [DEV ONLY] Seed mock data
       if (__DEV__) {
-        await devDataSeedService.seedMockTransactions()
+        // await devDataSeedService.seedMockTransactions()
       }
 
       // Mark as hydrated
-      useAppStore.getState().setHydrated(true)
+      useAppStore.getState().setHydrated(true);
     } catch (error) {
-      console.error("Failed to initialize app from storage:", error)
+      console.error('Failed to initialize app from storage:', error);
       // Still mark as hydrated to prevent loading state from hanging
-      useAppStore.getState().setHydrated(true)
+      useAppStore.getState().setHydrated(true);
     }
   },
-}
+};

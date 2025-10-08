@@ -4,6 +4,7 @@ import { format } from 'date-fns';
 
 import { TextView, Icon } from '@/components';
 import { makeStyles } from '@/utils/makeStyles';
+import { translate } from '@/i18n/translate';
 
 export interface TransactionItemData {
   id: string;
@@ -33,6 +34,16 @@ export const TransactionItem: React.FC<TransactionItemProps> = ({
     }).format(amount);
   };
 
+  const getDisplayText = () => {
+    if (transaction.description && transaction.description.trim()) {
+      return transaction.description;
+    }
+    // Fallback text based on transaction type
+    return transaction.amount > 0
+      ? translate('homeScreen.incomeTransaction')
+      : translate('homeScreen.expenseTransaction');
+  };
+
   return (
     <TouchableOpacity
       style={styles.container}
@@ -45,8 +56,17 @@ export const TransactionItem: React.FC<TransactionItemProps> = ({
       </View>
 
       <View style={styles.details}>
-        <TextView size="body" weight="semiBold" style={styles.name}>
-          {transaction.description}
+        <TextView
+          size="body"
+          weight="semiBold"
+          style={[
+            styles.name,
+            ...(!transaction.description?.trim()
+              ? [styles.placeholderText]
+              : []),
+          ]}
+        >
+          {getDisplayText()}
         </TextView>
         <TextView size="caption" style={styles.date}>
           {format(new Date(transaction.date), 'dd/MM/yyyy')}
@@ -106,6 +126,11 @@ const useStyles = makeStyles(theme => ({
   name: {
     color: theme.colors.text,
     marginBottom: theme.spacing.xxxs,
+  },
+
+  placeholderText: {
+    color: theme.colors.textDim,
+    fontStyle: 'italic',
   },
 
   date: {

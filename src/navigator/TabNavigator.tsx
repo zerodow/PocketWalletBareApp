@@ -1,5 +1,7 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Platform, View } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { Platform, Pressable, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 import {
   HomeScreen,
@@ -11,7 +13,6 @@ import {
 import { Icon } from '@/components';
 import { useTheme } from '@/theme';
 import { makeStyles } from '@/utils/makeStyles';
-import { translate } from '@/i18n/translate';
 import type { TabParamList } from './types';
 import { tabScreenOptions, SCREEN_NAME } from './config';
 
@@ -35,9 +36,15 @@ const SettingsIcon = ({ color, size }: { color: string; size: number }) => (
 const CenterTabIcon = ({ focused }: { focused: boolean }) => {
   const theme = useTheme();
   const styles = useStyles();
+  const navigation = useNavigation();
+
+  const handlePress = () => {
+    navigation.navigate(SCREEN_NAME.AddTab as never);
+  };
 
   return (
-    <View
+    <Pressable
+      onPress={handlePress}
       style={[
         styles.centerTabContainer,
         focused && styles.centerTabContainerFocused,
@@ -50,7 +57,7 @@ const CenterTabIcon = ({ focused }: { focused: boolean }) => {
         type="ionicon"
         style={{ transform: [{ rotate: '45deg' }] }}
       />
-    </View>
+    </Pressable>
   );
 };
 
@@ -63,6 +70,7 @@ const CenterTabButton = ({ children }: { children: React.ReactNode }) => {
 export function TabNavigator() {
   const theme = useTheme();
   const styles = useStyles();
+  const { t } = useTranslation();
 
   return (
     <Tab.Navigator
@@ -78,18 +86,18 @@ export function TabNavigator() {
         name={SCREEN_NAME.HomeTab}
         component={HomeScreen}
         options={{
-          title: translate('tabs.home'),
+          title: t('tabs.home'),
           tabBarIcon: HomeIcon,
-          tabBarAccessibilityLabel: translate('tabs.home'),
+          tabBarAccessibilityLabel: t('tabs.home'),
         }}
       />
       <Tab.Screen
         name={SCREEN_NAME.TransactionsTab}
         component={TransactionsTabScreen}
         options={{
-          title: translate('tabs.transactions'),
+          title: t('tabs.transactions'),
           tabBarIcon: TransactionsIcon,
-          tabBarAccessibilityLabel: translate('tabs.transactions'),
+          tabBarAccessibilityLabel: t('tabs.transactions'),
         }}
       />
       <Tab.Screen
@@ -99,25 +107,25 @@ export function TabNavigator() {
           title: '',
           tabBarIcon: CenterTabIcon,
           tabBarButton: CenterTabButton,
-          tabBarAccessibilityLabel: translate('tabs.add'),
+          tabBarAccessibilityLabel: t('tabs.add'),
         }}
       />
       <Tab.Screen
         name={SCREEN_NAME.AnalyticsTab}
         component={AnalyticsTabScreen}
         options={{
-          title: translate('tabs.analytics'),
+          title: t('tabs.analytics'),
           tabBarIcon: AnalyticsIcon,
-          tabBarAccessibilityLabel: translate('tabs.analytics'),
+          tabBarAccessibilityLabel: t('tabs.analytics'),
         }}
       />
       <Tab.Screen
         name={SCREEN_NAME.SettingsTab}
         component={SettingsTabScreen}
         options={{
-          title: translate('tabs.settings'),
+          title: t('tabs.settings'),
           tabBarIcon: SettingsIcon,
-          tabBarAccessibilityLabel: translate('tabs.settings'),
+          tabBarAccessibilityLabel: t('tabs.settings'),
         }}
       />
     </Tab.Navigator>

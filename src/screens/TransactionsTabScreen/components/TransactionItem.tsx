@@ -2,6 +2,7 @@ import { memo } from 'react';
 import { TouchableOpacity, View } from 'react-native';
 import { TextView } from '@/components';
 import { makeStyles } from '@/utils/makeStyles';
+import { translate } from '@/i18n/translate';
 import { TransactionType } from '@/types';
 import { TransactionItem as TransactionItemType } from '@/hooks/useTransactionPagination';
 
@@ -16,6 +17,18 @@ export const TransactionItem = memo<TransactionItemProps>(
   ({ item, onPress, formatDate, formatAmount }) => {
     const styles = useStyles();
 
+    const getDisplayText = () => {
+      if (item.description && item.description.trim()) {
+        return item.description;
+      }
+      // Fallback text based on transaction type
+      return item.type === 'income'
+        ? translate('homeScreen.incomeTransaction')
+        : translate('homeScreen.expenseTransaction');
+    };
+
+    const hasDescription = item.description && item.description.trim();
+
     return (
       <TouchableOpacity
         style={styles.transactionItem}
@@ -26,9 +39,12 @@ export const TransactionItem = memo<TransactionItemProps>(
           <TextView
             size="body"
             family="semiBold"
-            style={styles.transactionDesc}
+            style={[
+              styles.transactionDesc,
+              ...(!hasDescription ? [styles.placeholderText] : []),
+            ]}
           >
-            {item.description}
+            {getDisplayText()}
           </TextView>
           <TextView size="caption" style={styles.transactionCategory}>
             {item.categoryName}
@@ -72,6 +88,10 @@ const useStyles = makeStyles(theme => ({
   transactionDesc: {
     color: theme.colors.onSurface,
     marginBottom: 2,
+  },
+  placeholderText: {
+    color: theme.colors.textDim,
+    fontStyle: 'italic',
   },
   transactionCategory: {
     color: theme.colors.textDim,

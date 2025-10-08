@@ -229,15 +229,17 @@ const AnalyticsTabScreen = ({ navigation }: AnalyticsTabScreenProps) => {
             kpiData &&
             kpiData.totalIncome === 0 &&
             kpiData.totalExpense === 0 && (
-              <EmptyStateCard
-                title={translate('dashboardScreen.noData')}
-                subtitle={translate('dashboardScreen.noDataForMonth', {
-                  month: format(selectedMonth, 'MM/yyyy'),
-                })}
-                actionText={translate('dashboardScreen.addTransaction')}
-                onActionPress={handleNavigateToQuickAdd}
-                icon="plus"
-              />
+              <View style={styles.chartsSection}>
+                <EmptyStateCard
+                  title={translate('dashboardScreen.noData')}
+                  subtitle={translate('dashboardScreen.noDataForMonth', {
+                    month: format(selectedMonth, 'MM/yyyy'),
+                  })}
+                  actionText={translate('dashboardScreen.addTransaction')}
+                  onActionPress={handleNavigateToQuickAdd}
+                  icon="plus"
+                />
+              </View>
             )}
         </ScrollView>
       </View>

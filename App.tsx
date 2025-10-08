@@ -69,7 +69,7 @@ const App = () => {
     forceMode === 'dark' ? 'light-content' : 'dark-content';
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
+    <GestureHandlerRootView>
       <ThemeProvider forceMode={forceMode}>
         <SafeAreaProvider initialMetrics={initialWindowMetrics}>
           <StatusBar
