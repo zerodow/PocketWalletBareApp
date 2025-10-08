@@ -8,18 +8,18 @@ import { settingsService } from '@/services/settingsService';
 import { useAppStore } from '@/store/appStore';
 import { DatabaseQueries } from '@/database/queries';
 import { resetService } from '@/services/resetService';
+import { TabScreenProps } from '@/navigator/types';
 import {
   SettingsSection,
   SettingsRow,
   SettingsChip,
   SettingsChipRow,
+  SettingsActionRow,
 } from './components';
 
-interface SettingsTabScreenProps {
-  // Add navigation props when needed
-}
+type SettingsTabScreenProps = TabScreenProps<'SettingsTab'>;
 
-const SettingsTabScreen: FC<SettingsTabScreenProps> = ({}) => {
+const SettingsTabScreen: FC<SettingsTabScreenProps> = ({ navigation }) => {
   const styles = useStyles();
 
   // Subscribe to store state for reactive updates
@@ -118,6 +118,10 @@ const SettingsTabScreen: FC<SettingsTabScreenProps> = ({}) => {
     );
   }, []);
 
+  const handleNavigateToCategories = useCallback(() => {
+    navigation.navigate('CategoryList' as any);
+  }, [navigation]);
+
   return (
     <SafeAreaWrapper>
       <ScrollView
@@ -202,6 +206,18 @@ const SettingsTabScreen: FC<SettingsTabScreenProps> = ({}) => {
               ))}
             </SettingsChipRow>
           </SettingsRow>
+        </SettingsSection>
+
+        {/* Categories */}
+        <SettingsSection title={translate('settingsScreen.categories')}>
+          <SettingsActionRow
+            label={translate('settingsScreen.manageCategories')}
+            description={translate(
+              'settingsScreen.manageCategoriesDescription',
+            )}
+            icon="pricetags-outline"
+            onPress={handleNavigateToCategories}
+          />
         </SettingsSection>
 
         {/* Privacy & Security */}

@@ -1,5 +1,7 @@
 export * from './BaseButton';
 export * from './CategoryChips';
+export * from './ColorPicker';
+export * from './EmojiPicker';
 export * from './Icon';
 export * from './InputField';
 export * from './SafeAreaWrapper';
