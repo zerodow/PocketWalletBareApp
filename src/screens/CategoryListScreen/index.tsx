@@ -1,27 +1,30 @@
 import { View } from 'react-native';
 import { TextView, SafeAreaWrapper } from '@/components';
 import { makeStyles } from '@/utils/makeStyles';
+import { translate } from '@/i18n/translate';
 
 interface CategoryListScreenProps {
   // Add navigation props when needed
 }
 
-export default function CategoryListScreen({}: CategoryListScreenProps) {
+const CategoryListScreen = ({}: CategoryListScreenProps) => {
   const styles = useStyles();
 
   return (
     <SafeAreaWrapper>
       <View style={styles.container}>
         <TextView size="display" family="bold" style={styles.title}>
-          Categories
+          {translate('categoryListScreen.title')}
         </TextView>
         <TextView size="body" style={styles.subtitle}>
-          Category management placeholder - implement your category list here
+          {translate('categoryListScreen.subtitle')}
         </TextView>
       </View>
     </SafeAreaWrapper>
   );
-}
+};
+
+export default CategoryListScreen;
 
 const useStyles = makeStyles(theme => ({
   container: {

@@ -1,27 +1,30 @@
 import { View } from 'react-native';
 import { TextView, SafeAreaWrapper } from '@/components';
 import { makeStyles } from '@/utils/makeStyles';
+import { translate } from '@/i18n/translate';
 
-interface TransactionListScreenProps {
+interface SettingsTabScreenProps {
   // Add navigation props when needed
 }
 
-export default function TransactionListScreen({}: TransactionListScreenProps) {
+const SettingsTabScreen = ({}: SettingsTabScreenProps) => {
   const styles = useStyles();
 
   return (
     <SafeAreaWrapper>
       <View style={styles.container}>
         <TextView size="display" family="bold" style={styles.title}>
-          Transactions
+          {translate('settingsScreen.title')}
         </TextView>
         <TextView size="body" style={styles.subtitle}>
-          Transaction history placeholder - implement your transaction list here
+          {translate('settingsScreen.subtitle')}
         </TextView>
       </View>
     </SafeAreaWrapper>
   );
-}
+};
+
+export default SettingsTabScreen;
 
 const useStyles = makeStyles(theme => ({
   container: {

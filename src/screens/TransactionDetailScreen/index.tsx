@@ -1,6 +1,7 @@
 import { View } from 'react-native';
 import { TextView, SafeAreaWrapper } from '@/components';
 import { makeStyles } from '@/utils/makeStyles';
+import { translate } from '@/i18n/translate';
 
 interface TransactionDetailScreenProps {
   route?: {
@@ -10,9 +11,9 @@ interface TransactionDetailScreenProps {
   };
 }
 
-export default function TransactionDetailScreen({
+const TransactionDetailScreen = ({
   route,
-}: TransactionDetailScreenProps) {
+}: TransactionDetailScreenProps) => {
   const styles = useStyles();
   const transactionId = route?.params?.transactionId;
 
@@ -20,18 +21,20 @@ export default function TransactionDetailScreen({
     <SafeAreaWrapper>
       <View style={styles.container}>
         <TextView size="display" family="bold" style={styles.title}>
-          Transaction Detail
+          {translate('transactionDetailScreen.title')}
         </TextView>
         <TextView size="body" style={styles.subtitle}>
-          Transaction details placeholder - ID: {transactionId || 'N/A'}
+          {translate('transactionDetailScreen.subtitle', { transactionId: transactionId || 'N/A' })}
         </TextView>
         <TextView size="body" style={styles.description}>
-          Implement your transaction detail view here
+          {translate('transactionDetailScreen.description')}
         </TextView>
       </View>
     </SafeAreaWrapper>
   );
-}
+};
+
+export default TransactionDetailScreen;
 
 const useStyles = makeStyles(theme => ({
   container: {

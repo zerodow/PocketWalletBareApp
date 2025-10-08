@@ -1,28 +1,30 @@
 import { View } from 'react-native';
 import { TextView, SafeAreaWrapper } from '@/components';
 import { makeStyles } from '@/utils/makeStyles';
+import { translate } from '@/i18n/translate';
 
 interface QuickAddScreenProps {
   // Add navigation props when needed
 }
 
-export default function QuickAddScreen({}: QuickAddScreenProps) {
+const QuickAddScreen = ({}: QuickAddScreenProps) => {
   const styles = useStyles();
 
   return (
     <SafeAreaWrapper>
       <View style={styles.container}>
         <TextView size="display" family="bold" style={styles.title}>
-          Quick Add
+          {translate('quickAddScreen.title')}
         </TextView>
         <TextView size="body" style={styles.subtitle}>
-          Quick transaction entry placeholder - implement your add transaction
-          form here
+          {translate('quickAddScreen.subtitle')}
         </TextView>
       </View>
     </SafeAreaWrapper>
   );
-}
+};
+
+export default QuickAddScreen;
 
 const useStyles = makeStyles(theme => ({
   container: {

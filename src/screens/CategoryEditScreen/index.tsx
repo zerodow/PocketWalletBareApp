@@ -1,6 +1,7 @@
 import { View } from 'react-native';
 import { TextView, SafeAreaWrapper } from '@/components';
 import { makeStyles } from '@/utils/makeStyles';
+import { translate } from '@/i18n/translate';
 
 interface CategoryEditScreenProps {
   route?: {
@@ -11,7 +12,7 @@ interface CategoryEditScreenProps {
   };
 }
 
-export default function CategoryEditScreen({ route }: CategoryEditScreenProps) {
+const CategoryEditScreen = ({ route }: CategoryEditScreenProps) => {
   const styles = useStyles();
   const { categoryId, isIncome } = route?.params || { isIncome: false };
 
@@ -19,18 +20,22 @@ export default function CategoryEditScreen({ route }: CategoryEditScreenProps) {
     <SafeAreaWrapper>
       <View style={styles.container}>
         <TextView size="display" family="bold" style={styles.title}>
-          {categoryId ? 'Edit Category' : 'Add Category'}
+          {categoryId ? translate('categoryEditScreen.titleEdit') : translate('categoryEditScreen.titleAdd')}
         </TextView>
         <TextView size="body" style={styles.subtitle}>
-          Category editing placeholder - Type: {isIncome ? 'Income' : 'Expense'}
+          {translate('categoryEditScreen.subtitle', { 
+            type: isIncome ? translate('categoryEditScreen.typeIncome') : translate('categoryEditScreen.typeExpense') 
+          })}
         </TextView>
         <TextView size="body" style={styles.description}>
-          Implement your category form here
+          {translate('categoryEditScreen.description')}
         </TextView>
       </View>
     </SafeAreaWrapper>
   );
-}
+};
+
+export default CategoryEditScreen;
 
 const useStyles = makeStyles(theme => ({
   container: {

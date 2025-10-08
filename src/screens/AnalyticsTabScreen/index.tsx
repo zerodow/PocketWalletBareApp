@@ -1,27 +1,30 @@
 import { View } from 'react-native';
 import { TextView, SafeAreaWrapper } from '@/components';
 import { makeStyles } from '@/utils/makeStyles';
+import { translate } from '@/i18n/translate';
 
-interface SettingsScreenProps {
+interface AnalyticsTabScreenProps {
   // Add navigation props when needed
 }
 
-export default function SettingsScreen({}: SettingsScreenProps) {
+const AnalyticsTabScreen = ({}: AnalyticsTabScreenProps) => {
   const styles = useStyles();
 
   return (
     <SafeAreaWrapper>
       <View style={styles.container}>
         <TextView size="display" family="bold" style={styles.title}>
-          Settings
+          {translate('dashboardScreen.title')}
         </TextView>
         <TextView size="body" style={styles.subtitle}>
-          App settings placeholder - implement your settings options here
+          {translate('dashboardScreen.subtitle')}
         </TextView>
       </View>
     </SafeAreaWrapper>
   );
-}
+};
+
+export default AnalyticsTabScreen;
 
 const useStyles = makeStyles(theme => ({
   container: {

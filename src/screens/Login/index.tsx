@@ -155,7 +155,9 @@ const LoginScreen = () => {
     </SafeAreaWrapper>
   );
 };
+
 export default LoginScreen;
+
 const useStyles = makeStyles(theme => ({
   container: {
     flex: 1,

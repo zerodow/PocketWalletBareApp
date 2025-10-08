@@ -28,6 +28,73 @@ const en = {
     helpText:
       'Mock Authentication: Enter any non-empty email and password to login',
   },
+  registerScreen: {
+    title: 'Register',
+    subtitle:
+      'User registration placeholder - implement your registration form here',
+  },
+  homeScreen: {
+    title: 'Home Screen',
+    subtitle:
+      'Main dashboard placeholder - implement your home screen content here',
+    iconExamples: 'Icon Examples:',
+    ioniconLabel: 'Ionicons (default):',
+    assetIconLabel: 'Asset icons:',
+    localIconLabel: 'Local icons:',
+    // New HomeScreen translations
+    totalBalance: 'Total Balance',
+    budget: 'budget',
+    dailyBudget: 'Daily budget',
+    daysLeft: 'days left',
+    transactions: 'Transactions',
+    seeAll: 'See All',
+    today: 'Today',
+    loadingTransactions: 'Loading transactions...',
+    noTransactionsToday: 'No transactions today',
+    tapToAddTransaction: 'Tap + to add your first transaction',
+  },
+  dashboardScreen: {
+    title: 'Dashboard',
+    subtitle:
+      'Analytics dashboard placeholder - implement your charts and statistics here',
+  },
+  quickAddScreen: {
+    title: 'Quick Add',
+    subtitle:
+      'Quick transaction entry placeholder - implement your add transaction form here',
+  },
+  transactionListScreen: {
+    title: 'Transactions',
+    subtitle:
+      'Transaction history placeholder - implement your transaction list here',
+  },
+  settingsScreen: {
+    title: 'Settings',
+    subtitle: 'App settings placeholder - implement your settings options here',
+  },
+  transactionDetailScreen: {
+    title: 'Transaction Detail',
+    subtitle: 'Transaction details placeholder - ID: {{transactionId}}',
+    description: 'Implement your transaction detail view here',
+  },
+  trashScreen: {
+    title: 'Trash',
+    subtitle:
+      'Deleted items placeholder - implement your trash/recycle bin here',
+  },
+  categoryListScreen: {
+    title: 'Categories',
+    subtitle:
+      'Category management placeholder - implement your category list here',
+  },
+  categoryEditScreen: {
+    titleEdit: 'Edit Category',
+    titleAdd: 'Add Category',
+    subtitle: 'Category editing placeholder - Type: {{type}}',
+    description: 'Implement your category form here',
+    typeIncome: 'Income',
+    typeExpense: 'Expense',
+  },
 };
 
 export default en;

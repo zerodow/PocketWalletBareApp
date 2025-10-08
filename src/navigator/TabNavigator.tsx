@@ -3,35 +3,18 @@ import { Platform, View } from 'react-native';
 
 import {
   HomeScreen,
+  AnalyticsTabScreen,
   QuickAddScreen,
-  DashboardScreen,
-  TransactionListScreen,
-  SettingsScreen,
+  TransactionsTabScreen,
+  SettingsTabScreen,
 } from '@/screens';
 import { Icon } from '@/components';
 import { useTheme } from '@/theme';
 import { makeStyles } from '@/utils/makeStyles';
-import type { TabParamList, TabScreenProps } from './types';
+import type { TabParamList } from './types';
 import { tabScreenOptions, SCREEN_NAME } from './config';
 
 const Tab = createBottomTabNavigator<TabParamList>();
-
-// Wrapper components to ensure proper typing - defined outside to avoid re-creation
-const HomeTabScreen = (props: TabScreenProps<'HomeTab'>) => (
-  <HomeScreen {...props} />
-);
-const TransactionsTabScreen = (props: TabScreenProps<'TransactionsTab'>) => (
-  <TransactionListScreen {...props} />
-);
-const AddTabScreen = (props: TabScreenProps<'AddTab'>) => (
-  <QuickAddScreen {...props} />
-);
-const AnalyticsTabScreen = (props: TabScreenProps<'AnalyticsTab'>) => (
-  <DashboardScreen {...props} />
-);
-const SettingsTabScreen = (props: TabScreenProps<'SettingsTab'>) => (
-  <SettingsScreen {...props} />
-);
 
 // Icon components to avoid inline function creation
 const HomeIcon = ({ color, size }: { color: string; size: number }) => (
@@ -92,7 +75,7 @@ export function TabNavigator() {
     >
       <Tab.Screen
         name={SCREEN_NAME.HomeTab}
-        component={HomeTabScreen}
+        component={HomeScreen}
         options={{
           title: 'Home',
           tabBarIcon: HomeIcon,
@@ -110,7 +93,7 @@ export function TabNavigator() {
       />
       <Tab.Screen
         name={SCREEN_NAME.AddTab}
-        component={AddTabScreen}
+        component={QuickAddScreen}
         options={{
           title: '',
           tabBarIcon: CenterTabIcon,

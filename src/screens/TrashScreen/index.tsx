@@ -1,27 +1,30 @@
 import { View } from 'react-native';
 import { TextView, SafeAreaWrapper } from '@/components';
 import { makeStyles } from '@/utils/makeStyles';
+import { translate } from '@/i18n/translate';
 
 interface TrashScreenProps {
   // Add navigation props when needed
 }
 
-export default function TrashScreen({}: TrashScreenProps) {
+const TrashScreen = ({}: TrashScreenProps) => {
   const styles = useStyles();
 
   return (
     <SafeAreaWrapper>
       <View style={styles.container}>
         <TextView size="display" family="bold" style={styles.title}>
-          Trash
+          {translate('trashScreen.title')}
         </TextView>
         <TextView size="body" style={styles.subtitle}>
-          Deleted items placeholder - implement your trash/recycle bin here
+          {translate('trashScreen.subtitle')}
         </TextView>
       </View>
     </SafeAreaWrapper>
   );
-}
+};
+
+export default TrashScreen;
 
 const useStyles = makeStyles(theme => ({
   container: {

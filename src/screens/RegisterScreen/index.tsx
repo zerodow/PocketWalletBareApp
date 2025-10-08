@@ -1,27 +1,30 @@
 import { View } from 'react-native';
 import { TextView, SafeAreaWrapper } from '@/components';
 import { makeStyles } from '@/utils/makeStyles';
+import { translate } from '@/i18n/translate';
 
 interface RegisterScreenProps {
   // Add navigation props when needed
 }
 
-export default function RegisterScreen({}: RegisterScreenProps) {
+const RegisterScreen = ({}: RegisterScreenProps) => {
   const styles = useStyles();
 
   return (
     <SafeAreaWrapper>
       <View style={styles.container}>
         <TextView size="display" family="bold" style={styles.title}>
-          Register
+          {translate('registerScreen.title')}
         </TextView>
         <TextView size="body" style={styles.subtitle}>
-          User registration placeholder - implement your registration form here
+          {translate('registerScreen.subtitle')}
         </TextView>
       </View>
     </SafeAreaWrapper>
   );
-}
+};
+
+export default RegisterScreen;
 
 const useStyles = makeStyles(theme => ({
   container: {
