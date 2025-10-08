@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Alert, ScrollView, Switch, View } from 'react-native';
 
 import { TextView, SafeAreaWrapper, BaseButton } from '@/components';
@@ -19,7 +19,7 @@ import {
 
 type SettingsTabScreenProps = TabScreenProps<'SettingsTab'>;
 
-const SettingsTabScreen: FC<SettingsTabScreenProps> = ({ navigation }) => {
+const SettingsTabScreen = ({ navigation }: SettingsTabScreenProps) => {
   const styles = useStyles();
 
   // Subscribe to store state for reactive updates

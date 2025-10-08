@@ -1,4 +1,3 @@
-import { FC } from 'react';
 import {
   View,
   ScrollView,
@@ -17,9 +16,9 @@ import type { TabScreenProps } from '@/navigator/types';
 import { TransactionItem, TransactionItemData } from './components';
 import { useHomeData } from './hooks/useHomeData';
 
-interface HomeScreenProps extends TabScreenProps<'HomeTab'> {}
+type HomeScreenProps = TabScreenProps<'HomeTab'>;
 
-const HomeScreen: FC<HomeScreenProps> = ({ navigation }) => {
+const HomeScreen = ({ navigation }: HomeScreenProps) => {
   const { top } = useSafeAreaInsets();
   const styles = useStyles();
   const user = useAppStore(state => state.user);
