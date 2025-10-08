@@ -67,6 +67,20 @@ const en = {
     title: 'Transactions',
     subtitle:
       'Transaction history placeholder - implement your transaction list here',
+    // Date formatting
+    today: 'Today',
+    yesterday: 'Yesterday',
+    // Loading states
+    loadingMore: 'Loading more...',
+    // Empty state
+    emptyTitle: 'No transactions yet',
+    emptySubtitle: 'Tap the + button to add your first transaction',
+    addTransactionButton: 'Add Transaction',
+    // Currency formatting
+    currencyLocale: 'en-US',
+    currencySymbol: '$',
+    incomePrefix: '+',
+    expensePrefix: '-',
   },
   settingsScreen: {
     title: 'Settings',

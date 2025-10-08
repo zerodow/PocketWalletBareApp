@@ -124,7 +124,7 @@ export function useNavigationPersistence(persistenceKey: string) {
       // Save the current route name for later comparison
       routeNameRef.current = currentRouteName as keyof AppStackParamList;
       // Persist state to storage
-      storage.set(persistenceKey, JSON.stringify(state));
+      // storage.set(persistenceKey, JSON.stringify(state));
     }
   };
 

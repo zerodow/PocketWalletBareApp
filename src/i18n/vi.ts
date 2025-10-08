@@ -67,6 +67,20 @@ const vi = {
     title: 'Giao Dịch',
     subtitle:
       'Mẫu lịch sử giao dịch - triển khai danh sách giao dịch của bạn tại đây',
+    // Date formatting
+    today: 'Hôm nay',
+    yesterday: 'Hôm qua',
+    // Loading states
+    loadingMore: 'Đang tải thêm...',
+    // Empty state
+    emptyTitle: 'Chưa có giao dịch nào',
+    emptySubtitle: 'Nhấn nút + để thêm giao dịch đầu tiên',
+    addTransactionButton: 'Thêm Giao Dịch',
+    // Currency formatting
+    currencyLocale: 'vi-VN',
+    currencySymbol: '₫',
+    incomePrefix: '+',
+    expensePrefix: '-',
   },
   settingsScreen: {
     title: 'Cài Đặt',
