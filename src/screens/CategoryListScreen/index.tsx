@@ -358,11 +358,11 @@ const useStyles = makeStyles(theme => ({
     flexDirection: 'row',
     marginHorizontal: theme.spacing.md,
     marginVertical: theme.spacing.sm,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: theme.colors.palette.neutral200,
     borderRadius: theme.radius.md,
     padding: 4,
     borderWidth: 1,
-    borderColor: theme.colors.outline,
+    borderColor: theme.colors.palette.neutral400,
   },
   tab: {
     flex: 1,
@@ -395,7 +395,7 @@ const useStyles = makeStyles(theme => ({
     color: '#FFFFFF',
   },
   tabTextInactive: {
-    color: theme.colors.outline,
+    color: theme.colors.palette.neutral600,
   },
   listContainer: {
     flex: 1,

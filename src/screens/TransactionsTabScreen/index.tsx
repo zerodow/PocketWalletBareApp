@@ -1,24 +1,34 @@
 import {
   View,
-  FlatList,
+  SectionList,
   RefreshControl,
   ActivityIndicator,
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
-import { TextView, SafeAreaWrapper, BaseButton } from '@/components';
+import {
+  TextView,
+  SafeAreaWrapper,
+  BaseButton,
+  TransactionItem,
+} from '@/components';
 import { makeStyles } from '@/utils/makeStyles';
 import { translate } from '@/i18n/translate';
 import { TabScreenProps } from '@/navigator/types';
-import { TransactionType } from '@/types';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import {
   useTransactionPagination,
   TransactionItem as TransactionItemType,
 } from '@/hooks/useTransactionPagination';
 import { TransactionListSkeleton } from '@/components/Skeletons';
-import { TransactionItem } from './components';
+import { format, isToday, isYesterday } from 'date-fns';
 
 type TransactionsTabScreenProps = TabScreenProps<'TransactionsTab'>;
+
+interface TransactionSection {
+  title: string;
+  date: string;
+  data: TransactionItemType[];
+}
 
 const TransactionsTabScreen = ({ navigation }: TransactionsTabScreenProps) => {
   const styles = useStyles();
@@ -39,33 +49,45 @@ const TransactionsTabScreen = ({ navigation }: TransactionsTabScreenProps) => {
     }, [refreshProgressive, transactions.length]),
   );
 
-  const formatDate = (timestamp: number) => {
-    const date = new Date(timestamp);
-    const today = new Date();
-    const yesterday = new Date(today);
-    yesterday.setDate(yesterday.getDate() - 1);
+  // Group transactions by day
+  const sections = useMemo(() => {
+    const groupedByDay = transactions.reduce((acc, transaction) => {
+      const date = new Date(transaction.date);
+      const dateKey = format(date, 'yyyy-MM-dd');
 
-    if (date.toDateString() === today.toDateString()) {
-      return translate('transactionListScreen.today');
-    } else if (date.toDateString() === yesterday.toDateString()) {
-      return translate('transactionListScreen.yesterday');
-    } else {
-      const day = date.getDate().toString().padStart(2, '0');
-      const month = (date.getMonth() + 1).toString().padStart(2, '0');
-      return `${day}/${month}`;
-    }
-  };
+      if (!acc[dateKey]) {
+        acc[dateKey] = {
+          date: dateKey,
+          timestamp: transaction.date,
+          transactions: [],
+        };
+      }
+      acc[dateKey].transactions.push(transaction);
+      return acc;
+    }, {} as Record<string, { date: string; timestamp: number; transactions: TransactionItemType[] }>);
 
-  const formatAmount = (amount: number, type: TransactionType) => {
-    const locale = translate('transactionListScreen.currencyLocale');
-    const symbol = translate('transactionListScreen.currencySymbol');
-    const formatted = new Intl.NumberFormat(locale).format(amount);
-    const prefix =
-      type === 'income'
-        ? translate('transactionListScreen.incomePrefix')
-        : translate('transactionListScreen.expensePrefix');
-    return `${prefix}${symbol}${formatted}`;
-  };
+    // Convert to array and sort by date (newest first)
+    return Object.values(groupedByDay)
+      .sort((a, b) => b.timestamp - a.timestamp)
+      .map(group => {
+        const date = new Date(group.timestamp);
+        let title: string;
+
+        if (isToday(date)) {
+          title = translate('transactionListScreen.today');
+        } else if (isYesterday(date)) {
+          title = translate('transactionListScreen.yesterday');
+        } else {
+          title = format(date, 'dd/MM/yyyy');
+        }
+
+        return {
+          title,
+          date: group.date,
+          data: group.transactions,
+        } as TransactionSection;
+      });
+  }, [transactions]);
 
   const handleItemPress = useCallback(
     (transactionId: string) => {
@@ -75,15 +97,40 @@ const TransactionsTabScreen = ({ navigation }: TransactionsTabScreenProps) => {
   );
 
   const renderTransactionItem = useCallback(
-    ({ item }: { item: TransactionItemType }) => (
-      <TransactionItem
-        item={item}
-        onPress={handleItemPress}
-        formatDate={formatDate}
-        formatAmount={formatAmount}
-      />
-    ),
+    ({ item }: { item: TransactionItemType }) => {
+      const date = new Date(item.date);
+      const day = date.getDate().toString().padStart(2, '0');
+      const month = (date.getMonth() + 1).toString().padStart(2, '0');
+      const formattedDate = `${day}/${month}`;
+
+      return (
+        <TransactionItem
+          id={item.id}
+          description={item.description}
+          amount={item.type === 'income' ? item.amount : -item.amount}
+          date={formattedDate}
+          categoryName={item.categoryName || 'Danh mục'}
+          categoryColor={item.categoryColor || '#6B7280'}
+          categoryIcon={item.categoryIcon}
+          onPress={handleItemPress}
+        />
+      );
+    },
     [handleItemPress],
+  );
+
+  const renderSectionHeader = useCallback(
+    ({ section }: { section: TransactionSection }) => (
+      <View style={styles.sectionHeader}>
+        <TextView
+          text={section.title}
+          size="body"
+          family="semiBold"
+          color={styles.sectionHeaderText.color}
+        />
+      </View>
+    ),
+    [styles],
   );
 
   const keyExtractor = useCallback((item: TransactionItemType) => item.id, []);
@@ -135,10 +182,11 @@ const TransactionsTabScreen = ({ navigation }: TransactionsTabScreenProps) => {
         {progressive.showSkeleton ? (
           <TransactionListSkeleton count={8} />
         ) : (
-          <FlatList
-            data={transactions}
+          <SectionList
+            sections={sections}
             keyExtractor={keyExtractor}
             renderItem={renderTransactionItem}
+            renderSectionHeader={renderSectionHeader}
             contentContainerStyle={styles.listContent}
             showsVerticalScrollIndicator={false}
             ListEmptyComponent={renderEmptyState}
@@ -159,6 +207,8 @@ const TransactionsTabScreen = ({ navigation }: TransactionsTabScreenProps) => {
             }
             // Loading footer
             ListFooterComponent={renderFooter}
+            // Sticky headers
+            stickySectionHeadersEnabled={true}
           />
         )}
       </View>
@@ -218,5 +268,15 @@ const useStyles = makeStyles(theme => ({
   },
   loadingFooterText: {
     color: theme.colors.textDim,
+  },
+  sectionHeader: {
+    backgroundColor: theme.colors.background,
+    paddingVertical: theme.spacing.sm,
+    paddingHorizontal: theme.spacing.xs,
+    borderBottomWidth: 1,
+    borderBottomColor: theme.colors.palette.neutral300,
+  },
+  sectionHeaderText: {
+    color: theme.colors.palette.neutral600,
   },
 }));

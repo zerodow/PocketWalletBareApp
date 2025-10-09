@@ -55,7 +55,6 @@ const CenterTabIcon = ({ focused }: { focused: boolean }) => {
         size={24}
         color={theme.colors.onPrimary}
         type="ionicon"
-        style={{ transform: [{ rotate: '45deg' }] }}
       />
     </Pressable>
   );

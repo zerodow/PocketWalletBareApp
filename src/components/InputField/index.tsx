@@ -13,7 +13,8 @@ import { TxKeyPath } from '@/i18n';
 
 type InputType = 'text' | 'number' | 'password';
 
-export interface InputFieldProps extends Omit<TextInputProps, 'secureTextEntry'> {
+export interface InputFieldProps
+  extends Omit<TextInputProps, 'secureTextEntry'> {
   /**
    * Label text
    */
@@ -103,7 +104,7 @@ export const InputField = ({
   };
 
   const togglePasswordVisibility = () => {
-    setIsPasswordVisible((prev) => !prev);
+    setIsPasswordVisible(prev => !prev);
   };
 
   return (
@@ -183,7 +184,7 @@ export const InputField = ({
   );
 };
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   container: {
     width: '100%',
   },
@@ -216,7 +217,7 @@ const useStyles = makeStyles((theme) => ({
     paddingVertical: theme.spacing.sm,
   },
   placeholder: {
-    color: theme.colors.outline,
+    color: theme.isDark ? theme.colors.white : theme.colors.outline,
   },
   iconsContainer: {
     flexDirection: 'row',

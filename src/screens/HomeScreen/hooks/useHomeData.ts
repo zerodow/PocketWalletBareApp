@@ -109,6 +109,7 @@ export const useHomeData = (): UseHomeDataReturn => {
             date: t.occurredAt,
             categoryName: category?.name || 'Unknown',
             categoryColor: category?.color || '#6B7280',
+            categoryIcon: category?.icon,
           };
         });
 

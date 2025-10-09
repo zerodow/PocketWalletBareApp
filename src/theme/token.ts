@@ -95,6 +95,7 @@ const palette = {
   // Overlays
   overlay20: 'rgba(192, 132, 252, 0.1)',
   overlay50: 'rgba(192, 132, 252, 0.2)',
+  white: '#ffffff',
 } as const;
 
 // Colors - Light theme
@@ -121,6 +122,7 @@ export const lightColors = {
   success: palette.success500,
   warning: palette.warning500,
   info: palette.info500,
+  white: palette.white,
 
   // Semantic color names (from old system)
   text: palette.neutral800,
@@ -244,4 +246,5 @@ export const darkColors = {
 
   // Palette access for advanced usage
   palette: darkPalette,
+  white: '#ffffff',
 } as const;

@@ -10,6 +10,8 @@ export interface TransactionItem {
   description: string;
   date: number;
   categoryName?: string;
+  categoryIcon?: string;
+  categoryColor?: string;
 }
 
 export interface ProgressiveLoadingState {
@@ -60,7 +62,11 @@ export const useTransactionPagination = (
   const currentPageRef = useRef(0);
 
   const mapDatabaseTransaction = useCallback(
-    (record: any, categoryMap: Map<string, string>): TransactionItem => {
+    (
+      record: any,
+      categoryMap: Map<string, { name: string; icon: string; color: string }>,
+    ): TransactionItem => {
+      const category = categoryMap.get(record.categoryId);
       return {
         id: record.id,
         amount: Math.abs(record.amountMinorUnits / 100),
@@ -69,7 +75,9 @@ export const useTransactionPagination = (
           : 'expense') as TransactionType,
         description: record.description,
         date: record.occurredAt || new Date().getTime(),
-        categoryName: categoryMap.get(record.categoryId) || 'Danh mục',
+        categoryName: category?.name || 'Danh mục',
+        categoryIcon: category?.icon,
+        categoryColor: category?.color || '#6B7280',
       };
     },
     [],
@@ -93,7 +101,12 @@ export const useTransactionPagination = (
 
         // Load categories for mapping
         const categories = await DatabaseQueries.getCategories();
-        const categoryMap = new Map(categories.map(cat => [cat.id, cat.name]));
+        const categoryMap = new Map(
+          categories.map(cat => [
+            cat.id,
+            { name: cat.name, icon: cat.icon, color: cat.color },
+          ]),
+        );
 
         const transactionList = result.transactions.map(record =>
           mapDatabaseTransaction(record, categoryMap),
@@ -159,7 +172,12 @@ export const useTransactionPagination = (
           pageSize,
         );
         const categories = await DatabaseQueries.getCategories();
-        const categoryMap = new Map(categories.map(cat => [cat.id, cat.name]));
+        const categoryMap = new Map(
+          categories.map(cat => [
+            cat.id,
+            { name: cat.name, icon: cat.icon, color: cat.color },
+          ]),
+        );
 
         const transactionList = result.transactions.map(record =>
           mapDatabaseTransaction(record, categoryMap),

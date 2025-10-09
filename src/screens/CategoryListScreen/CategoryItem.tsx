@@ -143,11 +143,11 @@ export const CategoryItem = ({
 
 const useStyles = makeStyles(theme => ({
   categoryItem: {
-    backgroundColor: theme.colors.background,
+    backgroundColor: theme.colors.surface,
     borderRadius: theme.radius.lg,
     padding: theme.spacing.md,
     borderWidth: 1,
-    borderColor: theme.colors.outline,
+    borderColor: theme.colors.palette.neutral400,
     shadowColor: theme.colors.onBackground,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -155,7 +155,7 @@ const useStyles = makeStyles(theme => ({
     elevation: 2,
   },
   categoryItemActive: {
-    backgroundColor: theme.colors.surface,
+    backgroundColor: theme.colors.palette.neutral300,
     borderColor: theme.colors.primary,
   },
   categoryContent: {
@@ -184,10 +184,12 @@ const useStyles = makeStyles(theme => ({
     flex: 1,
   },
   defaultBadge: {
-    backgroundColor: theme.colors.primary + '20',
+    backgroundColor: theme.colors.primary + '30',
     borderRadius: theme.radius.sm,
     paddingHorizontal: theme.spacing.xs,
     paddingVertical: 2,
+    borderWidth: 1,
+    borderColor: theme.colors.primary + '50',
   },
   defaultBadgeText: {
     color: theme.colors.primary,
@@ -215,6 +217,6 @@ const useStyles = makeStyles(theme => ({
     borderRadius: theme.radius.sm,
   },
   dragIcon: {
-    color: theme.colors.outline,
+    color: theme.colors.palette.neutral600,
   },
 }));

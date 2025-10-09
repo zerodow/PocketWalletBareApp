@@ -7,4 +7,5 @@ export * from './InputField';
 export * from './SafeAreaWrapper';
 export * from './TextView';
 export * from './Toast';
+export * from './TransactionItem';
 export * from './TypeToggle';

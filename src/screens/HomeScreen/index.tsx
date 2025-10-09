@@ -7,13 +7,11 @@ import {
 } from 'react-native';
 import { format } from 'date-fns';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-
-import { TextView, SafeAreaWrapper, Icon } from '@/components';
+import { TextView, SafeAreaWrapper, Icon, TransactionItem } from '@/components';
 import { makeStyles } from '@/utils/makeStyles';
 import { useAppStore } from '@/store/appStore';
 import { translate } from '@/i18n/translate';
 import type { TabScreenProps } from '@/navigator/types';
-import { TransactionItem, TransactionItemData } from './components';
 import { useHomeData } from './hooks/useHomeData';
 
 type HomeScreenProps = TabScreenProps<'HomeTab'>;
@@ -38,16 +36,25 @@ const HomeScreen = ({ navigation }: HomeScreenProps) => {
   const getBudgetProgress = () => {
     return (budgetData.spent / budgetData.total) * 100;
   };
-
+  console.log('getBudgetProgress', getBudgetProgress());
   const handleTransactionPress = (transactionId: string) => {
     (navigation as any).navigate('TransactionDetail', {
       transactionId,
     });
   };
 
-  const renderTransactionItem: ListRenderItem<TransactionItemData> = ({
-    item,
-  }) => <TransactionItem transaction={item} onPress={handleTransactionPress} />;
+  const renderTransactionItem: ListRenderItem<any> = ({ item }) => (
+    <TransactionItem
+      id={item.id}
+      description={item.description}
+      amount={item.amount}
+      date={format(new Date(item.date), 'dd/MM/yyyy')}
+      categoryName={item.categoryName}
+      categoryColor={item.categoryColor}
+      categoryIcon={item.categoryIcon}
+      onPress={handleTransactionPress}
+    />
+  );
 
   const renderEmptyTransactions = () => (
     <View style={styles.emptyContainer}>
@@ -103,12 +110,7 @@ const HomeScreen = ({ navigation }: HomeScreenProps) => {
               onPress={() => (navigation as any).navigate('AddTab')}
               activeOpacity={0.8}
             >
-              <Icon
-                icon="add"
-                size={20}
-                color={styles.addIcon.color}
-                style={{ transform: [{ rotate: '45deg' }] }}
-              />
+              <Icon icon="add" size={20} color={styles.addIcon.color} />
             </TouchableOpacity>
           </View>
 
