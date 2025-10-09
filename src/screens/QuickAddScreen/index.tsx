@@ -27,6 +27,7 @@ import { useTransactionDraftStore } from '@/store/transactionDraftStore';
 import { useSyncStore } from '@/store/syncStore';
 import { useCategoryStore } from '@/store/categoryStore';
 import { database } from '@/database';
+import { statisticsService } from '@/services/statisticsService';
 
 type QuickAddScreenProps = TabScreenProps<'AddTab'>;
 
@@ -97,6 +98,11 @@ const QuickAddScreen = ({ navigation }: QuickAddScreenProps) => {
           transaction.transactionSyncStatus = 'pending';
         });
       });
+
+      // Update statistics for the affected month immediately
+      await statisticsService.updateStatisticsForTransaction(
+        newTransaction as any,
+      );
 
       // Enqueue sync operation
       const transactionData = newTransaction as any;

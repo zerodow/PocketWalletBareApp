@@ -90,5 +90,21 @@ export const migrations = schemaMigrations({
         }),
       ],
     },
+    {
+      toVersion: 6,
+      steps: [
+        createTable({
+          name: "monthly_budgets",
+          columns: [
+            { name: "year", type: "number", isIndexed: true },
+            { name: "month", type: "number", isIndexed: true },
+            { name: "budget_amount", type: "number" },
+            { name: "currency_code", type: "string" },
+            { name: "created_at", type: "number" },
+            { name: "updated_at", type: "number" },
+          ],
+        }),
+      ],
+    },
   ],
 })

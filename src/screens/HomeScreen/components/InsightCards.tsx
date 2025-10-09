@@ -49,11 +49,12 @@ export const InsightCards: React.FC<InsightCardsProps> = ({
                   { backgroundColor: topCategory.categoryColor + '20' },
                 ]}
               >
-                <Icon
+                <TextView>{topCategory.categoryIcon}</TextView>
+                {/* <Icon
                   icon={topCategory.categoryIcon}
                   size={20}
                   color={topCategory.categoryColor}
-                />
+                /> */}
               </View>
               <View style={styles.categoryInfo}>
                 <TextView

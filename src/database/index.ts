@@ -8,6 +8,7 @@ import {
   MonthlyStatistics,
   DailyStatistics,
   CategoryStatistics,
+  MonthlyBudget,
 } from "./models"
 import { schema } from "./schema"
 
@@ -25,9 +26,9 @@ const adapter = new SQLiteAdapter({
 // Then, make a Watermelon database from it:
 export const database = new Database({
   adapter,
-  modelClasses: [Category, Transaction, MonthlyStatistics, DailyStatistics, CategoryStatistics],
+  modelClasses: [Category, Transaction, MonthlyStatistics, DailyStatistics, CategoryStatistics, MonthlyBudget],
 })
 
-export { Category, Transaction, MonthlyStatistics, DailyStatistics, CategoryStatistics }
+export { Category, Transaction, MonthlyStatistics, DailyStatistics, CategoryStatistics, MonthlyBudget }
 export * from "./schema"
 export * from "./migrations"

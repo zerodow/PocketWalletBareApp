@@ -56,7 +56,7 @@ yarn test
 - **HTTP Client**: axios
 - **Date Utilities**: date-fns
 - **Number Formatting**: numeral
-- **Locale**: expo-localization
+- **Locale**: react-native-localize
 
 ### Project Structure
 ```
@@ -91,6 +91,9 @@ src/
 │   ├── statisticsService.ts    # Statistics calculations
 │   ├── statisticsObserver.ts   # Statistics auto-update
 │   └── api/                    # API client setup
+├── storage/        # Storage adapters (layer over MMKV)
+│   ├── authStorage.ts          # Auth state persistence
+│   └── settingsStorage.ts      # Settings persistence
 ├── store/          # Zustand stores
 │   ├── appStore.ts             # App-wide state (auth, theme, language)
 │   ├── transactionDraftStore.ts
@@ -124,15 +127,22 @@ The app uses WatermelonDB for local-first data persistence with SQLite:
 - **JSI mode**: Enabled for maximum performance on iOS/Android
 - **Migrations**: Managed in `src/database/migrations.ts`
 - **Queries**: Common queries in `src/database/queries.ts`
+  - Use `DatabaseQueries` object for optimized queries (e.g., `getTransactionsForMonth`, `getMonthlySummary`, `getTransactionsPaginated`)
+  - CRUD operations available for transactions and categories
+  - Queries are optimized with indexed fields for performance
+
+**Currency Handling**: Transactions store amounts in minor units (e.g., cents for USD, dong for VND) in the `amount_minor_units` field. This prevents floating-point precision issues.
+
+**Soft Delete**: Transactions use soft delete via the `trashed_at` timestamp field. Use this for trash/recycle bin functionality.
 
 ### Navigation Architecture
 
 Navigation uses a hybrid stack/tab structure:
 
-- **PublicStackParamList**: Unauthenticated screens (Login)
-- **AppStackParamList**: Main app (contains Tabs)
-- **BottomTabParamList**: Tab navigator (Home, InventoryHubList, Profile)
-- **ProfileStackParamList**: Nested stack within Profile tab
+- **AuthStackParamList**: Unauthenticated screens (Login, Register)
+- **AppStackParamList**: Root app stack (Main, Auth)
+- **MainStackParamList**: Main app screens (TabNavigator, TransactionDetail, Trash, CategoryList, CategoryEdit)
+- **TabParamList**: Bottom tab navigator (HomeTab, TransactionsTab, AddTab, AnalyticsTab, SettingsTab)
 
 Navigation utilities in `navigationUtilities.ts`:
 - `navigationRef` - Access navigation outside components
@@ -140,6 +150,8 @@ Navigation utilities in `navigationUtilities.ts`:
 - `goBack()` - Go back if possible
 - `switchToTab(name)` - Reset to specific tab
 - `resetRoot(state)` - Reset navigation state
+
+**Screen Names**: Use `SCREEN_NAME` constants from `navigator/config.ts` for type-safe navigation
 
 ### Theming System
 
@@ -180,13 +192,27 @@ const styles = useStyles();
 
 Stores are located in `src/store/`:
 
-**appStore.ts** - Main app state:
+**appStore** - Global app state:
 - Auth state: `isAuthenticated`, `user`
 - Settings: `themeMode`, `language`, `currencyCode`, `defaultTxType`
 - Hydration: `isHydrated` flag
 - Actions: `setAuthState`, `clearAuthState`, `setThemeMode`, etc.
 
-Stores use MMKV persistence via `zustandStorage` middleware from `utils/storage.ts`.
+**categoryStore** - Category management:
+- Fetches, creates, updates, deletes, and reorders categories
+- Provides `getCategoriesByType()` helper for filtering by income/expense
+
+**dashboardStore** - Dashboard/analytics data:
+- KPI data (income, expense, savings)
+- Daily chart data and category breakdown
+- Progressive loading support for better UX
+- Month selection and navigation
+
+**transactionDraftStore** - Draft transaction state for the Add screen
+
+**syncStore** - Sync status management
+
+Note: `appStore` uses MMKV persistence via `zustandStorage` middleware.
 
 ### App Initialization Flow
 
@@ -204,7 +230,7 @@ This service should be called early in the app lifecycle.
 - **Initialization**: Call `initI18n()` from `src/i18n/index.ts` on app startup
 - **Supported locales**: English (en), Vietnamese (vi)
 - **RTL support**: Automatically enabled based on device locale
-- **System locale**: Auto-detected via `expo-localization`
+- **System locale**: Auto-detected via `react-native-localize`
 - **Translations**: Stored in `src/i18n/en.ts` and `src/i18n/vi.ts`
 - **Type-safe keys**: Use `TxKeyPath` type for translation keys
 
@@ -221,6 +247,11 @@ This service should be called early in the app lifecycle.
 - `USER_ROLE`: 'user_role'
 - `DEBUG_MODE`: 'app_debug_mode'
 
+**Storage Adapters** (`src/storage/`):
+- `authStorage`: Handles auth state persistence (isAuthenticated, userEmail)
+- `settingsStorage`: Handles user settings persistence (theme, language, currency, defaultTxType)
+- These provide a clean abstraction layer over MMKV storage
+
 ### Services Layer
 
 Services contain business logic separated from UI:
@@ -230,14 +261,17 @@ Services contain business logic separated from UI:
 - **categorySeedService**: Ensures default categories exist
 - **devDataSeedService**: Creates mock data (DEV only)
 - **settingsService**: User preferences management
-- **statisticsService**: Financial statistics calculations
+- **statisticsService**: Financial statistics calculations (monthly, daily, category aggregations)
 - **statisticsObserver**: Auto-updates statistics on data changes
+- **statisticsBackfill**: Backfills historical statistics data
+- **resetService**: Factory reset functionality (clears all data)
 
 ## Code Conventions
 
 ### Babel Configuration
 - Uses `@react-native/babel-preset`
 - Plugins:
+  - `@babel/plugin-proposal-decorators` with legacy mode (required for WatermelonDB models)
   - `react-native-worklets/plugin` for Reanimated
   - `babel-plugin-module-resolver` for `@/*` path aliases
 

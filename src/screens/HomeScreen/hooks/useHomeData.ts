@@ -1,5 +1,5 @@
-import { useState, useCallback } from 'react';
-import { useFocusEffect } from '@react-navigation/native';
+import { useState, useCallback, useEffect } from 'react';
+import { useIsFocused } from '@react-navigation/native';
 import { startOfMonth, endOfMonth, isToday } from 'date-fns';
 import { Q } from '@nozbe/watermelondb';
 
@@ -7,6 +7,7 @@ import { database } from '@/database';
 import Transaction from '@/database/models/Transaction';
 import Category from '@/database/models/Category';
 import { statisticsService } from '@/services/statisticsService';
+import { budgetService } from '@/services/budgetService';
 
 interface TransactionItemData {
   id: string;
@@ -44,7 +45,7 @@ export interface SpendingRateData {
 interface UseHomeDataReturn {
   isLoading: boolean;
   totalBalance: number;
-  budgetData: BudgetData;
+  budgetData: BudgetData | null;
   recentTransactions: TransactionItemData[];
   topCategory: TopCategoryData | null;
   spendingRate: SpendingRateData | null;
@@ -52,14 +53,10 @@ interface UseHomeDataReturn {
 }
 
 export const useHomeData = (): UseHomeDataReturn => {
+  const isFocused = useIsFocused();
   const [isLoading, setIsLoading] = useState(true);
   const [totalBalance, setTotalBalance] = useState(0);
-  const [budgetData, setBudgetData] = useState<BudgetData>({
-    spent: 0,
-    total: 0,
-    dailyBudget: 0,
-    daysLeft: 0,
-  });
+  const [budgetData, setBudgetData] = useState<BudgetData | null>(null);
   const [recentTransactions, setRecentTransactions] = useState<
     TransactionItemData[]
   >([]);
@@ -111,22 +108,35 @@ export const useHomeData = (): UseHomeDataReturn => {
       const balance = monthlyIncome - monthlyExpenses;
       setTotalBalance(balance);
 
-      // Calculate budget data (using monthly expenses as budget tracking)
-      const monthBudget = 1000000; // Example budget of 1M VND
-      const daysInMonth = new Date(
-        now.getFullYear(),
-        now.getMonth() + 1,
-        0,
-      ).getDate();
-      const currentDay = now.getDate();
-      const daysLeft = daysInMonth - currentDay;
+      // Get budget for current month from database
+      const currentYear = now.getFullYear();
+      const currentMonth = now.getMonth() + 1;
+      const monthlyBudget = await budgetService.getBudgetForMonth(
+        currentYear,
+        currentMonth,
+      );
 
-      setBudgetData({
-        spent: monthlyExpenses,
-        total: monthBudget,
-        dailyBudget: monthBudget / daysInMonth,
-        daysLeft: Math.max(0, daysLeft),
-      });
+      if (monthlyBudget) {
+        // Budget exists - calculate budget data
+        const budgetAmountInUnits = monthlyBudget.budgetAmount / 100; // Convert from minor units
+        const daysInMonth = new Date(
+          now.getFullYear(),
+          now.getMonth() + 1,
+          0,
+        ).getDate();
+        const currentDay = now.getDate();
+        const daysLeft = daysInMonth - currentDay;
+
+        setBudgetData({
+          spent: monthlyExpenses,
+          total: budgetAmountInUnits,
+          dailyBudget: budgetAmountInUnits / daysInMonth,
+          daysLeft: Math.max(0, daysLeft),
+        });
+      } else {
+        // No budget set - set to null to show empty state
+        setBudgetData(null);
+      }
 
       // Get today's transactions for recent list
       const todayTransactions = transactions
@@ -149,8 +159,11 @@ export const useHomeData = (): UseHomeDataReturn => {
 
       // Calculate top expense category
       try {
-        const currentYear = now.getFullYear();
-        const currentMonth = now.getMonth() + 1;
+        // Ensure statistics are up-to-date before reading category stats
+        await statisticsService.generateMonthlyStatistics(
+          currentYear,
+          currentMonth,
+        );
 
         const categoryStats = await statisticsService.getCategoryStatistics(
           currentYear,
@@ -158,7 +171,6 @@ export const useHomeData = (): UseHomeDataReturn => {
         );
 
         if (categoryStats.length > 0) {
-          console.log('categoryStats', categoryStats);
           // Sort by totalAmount descending to get the top category
           const topCategoryStat = categoryStats.sort(
             (a, b) => b.totalAmount - a.totalAmount,
@@ -188,9 +200,6 @@ export const useHomeData = (): UseHomeDataReturn => {
 
       // Calculate spending rate comparison
       try {
-        const currentYear = now.getFullYear();
-        const currentMonth = now.getMonth() + 1;
-
         // Get last month's date
         const lastMonthDate = new Date(
           now.getFullYear(),
@@ -256,12 +265,12 @@ export const useHomeData = (): UseHomeDataReturn => {
     }
   }, []);
 
-  // Load data when screen comes into focus
-  useFocusEffect(
-    useCallback(() => {
+  // Load data when screen/tab comes into focus
+  useEffect(() => {
+    if (isFocused) {
       loadData();
-    }, [loadData]),
-  );
+    }
+  }, [isFocused, loadData]);
 
   return {
     isLoading,

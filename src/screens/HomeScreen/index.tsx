@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
   View,
   ScrollView,
@@ -7,7 +8,8 @@ import {
 } from 'react-native';
 import { format } from 'date-fns';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { TextView, SafeAreaWrapper, Icon, TransactionItem } from '@/components';
+import Toast from 'react-native-toast-message';
+import { TextView, SafeAreaWrapper, Icon, TransactionItem, BudgetInputModal } from '@/components';
 import { makeStyles } from '@/utils/makeStyles';
 import { useAppStore } from '@/store/appStore';
 import { translate } from '@/i18n/translate';
@@ -15,6 +17,7 @@ import type { TabScreenProps } from '@/navigator/types';
 import { useHomeData } from './hooks/useHomeData';
 import { InsightCards } from './components/InsightCards';
 import { BudgetCard } from './components/BudgetCard';
+import { budgetService } from '@/services/budgetService';
 
 type HomeScreenProps = TabScreenProps<'HomeTab'>;
 
@@ -22,6 +25,7 @@ const HomeScreen = ({ navigation }: HomeScreenProps) => {
   const { top } = useSafeAreaInsets();
   const styles = useStyles();
   const user = useAppStore(state => state.user);
+  const [isBudgetModalVisible, setIsBudgetModalVisible] = useState(false);
 
   // Use custom hook for data loading
   const {
@@ -31,6 +35,7 @@ const HomeScreen = ({ navigation }: HomeScreenProps) => {
     recentTransactions,
     topCategory,
     spendingRate,
+    refreshData,
   } = useHomeData();
 
   const formatAmount = (amount: number) => {
@@ -70,6 +75,32 @@ const HomeScreen = ({ navigation }: HomeScreenProps) => {
       </TextView>
     </View>
   );
+
+  const handleSetBudget = () => {
+    setIsBudgetModalVisible(true);
+  };
+
+  const handleSaveBudget = async (amount: number) => {
+    try {
+      await budgetService.setCurrentMonthBudget(amount, 'VND');
+      Toast.show({
+        type: 'success',
+        text1: translate('homeScreen.budgetSaved'),
+        text2: translate('homeScreen.budgetSavedMessage'),
+        visibilityTime: 2000,
+      });
+      // Refresh data to show updated budget
+      refreshData();
+    } catch (error) {
+      console.error('Failed to save budget:', error);
+      Toast.show({
+        type: 'error',
+        text1: translate('homeScreen.budgetSaveFailed'),
+        text2: translate('homeScreen.budgetSaveFailedMessage'),
+        visibilityTime: 2000,
+      });
+    }
+  };
 
   return (
     <SafeAreaWrapper top={false}>
@@ -119,7 +150,7 @@ const HomeScreen = ({ navigation }: HomeScreenProps) => {
           </View>
 
           {/* Budget Card */}
-          <BudgetCard budgetData={budgetData} />
+          <BudgetCard budgetData={budgetData} onSetBudget={handleSetBudget} />
 
           {/* Insight Cards */}
           <InsightCards
@@ -177,6 +208,14 @@ const HomeScreen = ({ navigation }: HomeScreenProps) => {
           </View>
         </View>
       </ScrollView>
+
+      {/* Budget Input Modal */}
+      <BudgetInputModal
+        visible={isBudgetModalVisible}
+        onClose={() => setIsBudgetModalVisible(false)}
+        onSave={handleSaveBudget}
+        initialAmount={budgetData?.total}
+      />
     </SafeAreaWrapper>
   );
 };

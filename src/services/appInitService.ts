@@ -1,6 +1,7 @@
 import { authService } from './authService';
 import { settingsService } from './settingsService';
 import { categorySeedService } from './categorySeedService';
+import { statisticsService } from './statisticsService';
 import { useAppStore } from '@/store/appStore';
 
 /**
@@ -25,6 +26,9 @@ export const appInitService = {
       if (__DEV__) {
         // await devDataSeedService.seedMockTransactions();
       }
+
+      // Start statistics observer for auto-updates
+      statisticsService.startAutoUpdates();
 
       // Mark as hydrated
       useAppStore.getState().setHydrated(true);

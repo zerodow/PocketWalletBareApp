@@ -26,6 +26,7 @@ import { MainStackScreenProps } from '@/navigator/types';
 import { useSyncStore } from '@/store/syncStore';
 import { useCategoryStore } from '@/store/categoryStore';
 import { database } from '@/database';
+import { statisticsService } from '@/services/statisticsService';
 
 interface TransactionDetail {
   id: string;
@@ -131,6 +132,14 @@ const TransactionDetailScreen = ({
         });
       });
 
+      // Update statistics for affected months (handles date/category changes)
+      const updatedRecord = await database
+        .get('transactions')
+        .find(transaction.id);
+      await statisticsService.updateStatisticsForTransaction(
+        updatedRecord as any,
+      );
+
       // Enqueue sync operation
       enqueue({
         id: transaction.id,
@@ -191,6 +200,14 @@ const TransactionDetailScreen = ({
           record.transactionSyncStatus = 'pending';
         });
       });
+
+      // Update statistics for affected month after delete (soft delete)
+      const deletedRecord = await database
+        .get('transactions')
+        .find(transaction.id);
+      await statisticsService.updateStatisticsForTransaction(
+        deletedRecord as any,
+      );
 
       // Enqueue sync operation
       enqueue({
