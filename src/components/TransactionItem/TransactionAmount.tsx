@@ -53,11 +53,12 @@ export const TransactionAmount: React.FC<TransactionAmountProps> = ({
 const useStyles = makeStyles(theme => ({
   container: {
     alignItems: 'flex-end',
+    gap: theme.spacing.xxs,
   },
   amountContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: theme.spacing.xxs,
+    // gap: theme.spacing.xxxs,
     marginBottom: 2,
   },
   currency: {

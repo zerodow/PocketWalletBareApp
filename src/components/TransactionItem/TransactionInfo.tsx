@@ -42,11 +42,11 @@ export const TransactionInfo: React.FC<TransactionInfoProps> = ({
         }
         style={hasDescription ? undefined : styles.placeholderItalic}
       />
-      <TextView
+      {/* <TextView
         text={categoryName}
         size="caption"
         color={styles.category.color}
-      />
+      /> */}
     </View>
   );
 };

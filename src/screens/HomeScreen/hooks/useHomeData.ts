@@ -6,7 +6,17 @@ import { Q } from '@nozbe/watermelondb';
 import { database } from '@/database';
 import Transaction from '@/database/models/Transaction';
 import Category from '@/database/models/Category';
-import type { TransactionItemData } from '../components/TransactionItem';
+import { statisticsService } from '@/services/statisticsService';
+
+interface TransactionItemData {
+  id: string;
+  description: string;
+  amount: number;
+  date: number;
+  categoryName: string;
+  categoryColor: string;
+  categoryIcon?: string;
+}
 
 interface BudgetData {
   spent: number;
@@ -15,11 +25,29 @@ interface BudgetData {
   daysLeft: number;
 }
 
+export interface TopCategoryData {
+  categoryId: string;
+  categoryName: string;
+  categoryIcon: string;
+  categoryColor: string;
+  amount: number;
+  percentage: number;
+}
+
+export interface SpendingRateData {
+  currentMonthRate: number;
+  lastMonthRate: number;
+  difference: number;
+  isHigher: boolean;
+}
+
 interface UseHomeDataReturn {
   isLoading: boolean;
   totalBalance: number;
   budgetData: BudgetData;
   recentTransactions: TransactionItemData[];
+  topCategory: TopCategoryData | null;
+  spendingRate: SpendingRateData | null;
   refreshData: () => void;
 }
 
@@ -35,6 +63,10 @@ export const useHomeData = (): UseHomeDataReturn => {
   const [recentTransactions, setRecentTransactions] = useState<
     TransactionItemData[]
   >([]);
+  const [topCategory, setTopCategory] = useState<TopCategoryData | null>(null);
+  const [spendingRate, setSpendingRate] = useState<SpendingRateData | null>(
+    null,
+  );
 
   const loadData = useCallback(async () => {
     try {
@@ -114,6 +146,109 @@ export const useHomeData = (): UseHomeDataReturn => {
         });
 
       setRecentTransactions(todayTransactions);
+
+      // Calculate top expense category
+      try {
+        const currentYear = now.getFullYear();
+        const currentMonth = now.getMonth() + 1;
+
+        const categoryStats = await statisticsService.getCategoryStatistics(
+          currentYear,
+          currentMonth,
+        );
+
+        if (categoryStats.length > 0) {
+          console.log('categoryStats', categoryStats);
+          // Sort by totalAmount descending to get the top category
+          const topCategoryStat = categoryStats.sort(
+            (a, b) => b.totalAmount - a.totalAmount,
+          )[0];
+
+          const category = categoryMap.get(topCategoryStat.categoryId);
+
+          if (category) {
+            setTopCategory({
+              categoryId: topCategoryStat.categoryId,
+              categoryName: category.name,
+              categoryIcon: category.icon,
+              categoryColor: category.color,
+              amount: topCategoryStat.totalAmount,
+              percentage: topCategoryStat.percentageOfMonth,
+            });
+          } else {
+            setTopCategory(null);
+          }
+        } else {
+          setTopCategory(null);
+        }
+      } catch (error) {
+        console.error('Failed to load top category:', error);
+        setTopCategory(null);
+      }
+
+      // Calculate spending rate comparison
+      try {
+        const currentYear = now.getFullYear();
+        const currentMonth = now.getMonth() + 1;
+
+        // Get last month's date
+        const lastMonthDate = new Date(
+          now.getFullYear(),
+          now.getMonth() - 1,
+          1,
+        );
+        const lastMonthYear = lastMonthDate.getFullYear();
+        const lastMonthMonth = lastMonthDate.getMonth() + 1;
+
+        // Get current month statistics
+        const currentMonthStats = await statisticsService.getMonthlyStatistics(
+          currentYear,
+          currentMonth,
+        );
+
+        // Get last month statistics
+        const lastMonthStats = await statisticsService.getMonthlyStatistics(
+          lastMonthYear,
+          lastMonthMonth,
+        );
+
+        if (currentMonthStats) {
+          const currentIncome = currentMonthStats.totalIncome;
+          const currentExpense = currentMonthStats.totalExpense;
+          const currentRate =
+            currentIncome > 0 ? (currentExpense / currentIncome) * 100 : 0;
+
+          if (lastMonthStats) {
+            const lastIncome = lastMonthStats.totalIncome;
+            const lastExpense = lastMonthStats.totalExpense;
+            const lastRate =
+              lastIncome > 0 ? (lastExpense / lastIncome) * 100 : 0;
+
+            const rateDifference = currentRate - lastRate;
+            const isHigher = rateDifference > 0;
+
+            setSpendingRate({
+              currentMonthRate: currentRate,
+              lastMonthRate: lastRate,
+              difference: Math.abs(rateDifference),
+              isHigher,
+            });
+          } else {
+            // No last month data
+            setSpendingRate({
+              currentMonthRate: currentRate,
+              lastMonthRate: 0,
+              difference: 0,
+              isHigher: false,
+            });
+          }
+        } else {
+          setSpendingRate(null);
+        }
+      } catch (error) {
+        console.error('Failed to load spending rate:', error);
+        setSpendingRate(null);
+      }
     } catch (error) {
       console.error('Failed to load home screen data:', error);
     } finally {
@@ -133,6 +268,8 @@ export const useHomeData = (): UseHomeDataReturn => {
     totalBalance,
     budgetData,
     recentTransactions,
+    topCategory,
+    spendingRate,
     refreshData: loadData,
   };
 };

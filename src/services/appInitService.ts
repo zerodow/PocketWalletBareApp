@@ -2,7 +2,6 @@ import { authService } from './authService';
 import { settingsService } from './settingsService';
 import { categorySeedService } from './categorySeedService';
 import { useAppStore } from '@/store/appStore';
-import { devDataSeedService } from './devDataSeedService';
 
 /**
  * App initialization service that handles startup hydration
@@ -24,7 +23,7 @@ export const appInitService = {
 
       // [DEV ONLY] Seed mock data
       if (__DEV__) {
-        await devDataSeedService.seedMockTransactions();
+        // await devDataSeedService.seedMockTransactions();
       }
 
       // Mark as hydrated

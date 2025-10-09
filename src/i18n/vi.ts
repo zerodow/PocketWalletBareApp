@@ -61,6 +61,15 @@ const vi = {
     tapToAddTransaction: 'Nhấn + để thêm giao dịch đầu tiên',
     incomeTransaction: 'Thu nhập',
     expenseTransaction: 'Chi tiêu',
+    // Insight Cards
+    topCategory: 'Chi Tiêu Cao Nhất',
+    spendingRate: 'Tỷ Lệ Chi Tiêu',
+    ofExpenses: 'của chi tiêu',
+    higherThanLastMonth: 'cao hơn tháng trước',
+    lowerThanLastMonth: 'thấp hơn tháng trước',
+    noExpenseData: 'Chưa có dữ liệu chi tiêu',
+    noIncomeData: 'Không đủ dữ liệu',
+    noComparisonData: 'Chưa có dữ liệu so sánh',
   },
   dashboardScreen: {
     title: 'Tổng Quan',

@@ -61,6 +61,15 @@ const en = {
     tapToAddTransaction: 'Tap + to add your first transaction',
     incomeTransaction: 'Income',
     expenseTransaction: 'Expense',
+    // Insight Cards
+    topCategory: 'Top Expense',
+    spendingRate: 'Spending Rate',
+    ofExpenses: 'of expenses',
+    higherThanLastMonth: 'higher than last month',
+    lowerThanLastMonth: 'lower than last month',
+    noExpenseData: 'No expense data',
+    noIncomeData: 'Not enough data',
+    noComparisonData: 'No comparison data',
   },
   dashboardScreen: {
     title: 'Dashboard',

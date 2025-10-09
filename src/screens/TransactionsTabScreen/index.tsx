@@ -104,16 +104,18 @@ const TransactionsTabScreen = ({ navigation }: TransactionsTabScreenProps) => {
       const formattedDate = `${day}/${month}`;
 
       return (
-        <TransactionItem
-          id={item.id}
-          description={item.description}
-          amount={item.type === 'income' ? item.amount : -item.amount}
-          date={formattedDate}
-          categoryName={item.categoryName || 'Danh mục'}
-          categoryColor={item.categoryColor || '#6B7280'}
-          categoryIcon={item.categoryIcon}
-          onPress={handleItemPress}
-        />
+        <View style={styles.paddingItem}>
+          <TransactionItem
+            id={item.id}
+            description={item.description}
+            amount={item.type === 'income' ? item.amount : -item.amount}
+            date={formattedDate}
+            categoryName={item.categoryName || 'Danh mục'}
+            categoryColor={item.categoryColor || '#6B7280'}
+            categoryIcon={item.categoryIcon}
+            onPress={handleItemPress}
+          />
+        </View>
       );
     },
     [handleItemPress],
@@ -233,7 +235,7 @@ const useStyles = makeStyles(theme => ({
     color: theme.colors.onBackground,
   },
   listContent: {
-    padding: theme.spacing.md,
+    // padding: theme.spacing.md,
     flexGrow: 1,
   },
   emptyState: {
@@ -272,11 +274,15 @@ const useStyles = makeStyles(theme => ({
   sectionHeader: {
     backgroundColor: theme.colors.background,
     paddingVertical: theme.spacing.sm,
-    paddingHorizontal: theme.spacing.xs,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.palette.neutral300,
+    paddingHorizontal: theme.spacing.xs + theme.spacing.md,
+    // borderBottomWidth: 1,
+    // borderBottomColor: theme.colors.palette.neutral300,
+    // marginHorizontal: theme.spacing.md,
   },
   sectionHeaderText: {
     color: theme.colors.palette.neutral600,
+  },
+  paddingItem: {
+    paddingHorizontal: theme.spacing.md,
   },
 }));
