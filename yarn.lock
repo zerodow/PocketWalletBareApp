@@ -2,6 +2,11 @@
 # yarn lockfile v1
 
 
+"@appcitor/react-native-voice-to-text@^0.2.1":
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/@appcitor/react-native-voice-to-text/-/react-native-voice-to-text-0.2.1.tgz#968a6c468944b440b80f3428e6bb1dd89f3a7391"
+  integrity sha512-HPZhZ3LoYrZVGthsD5+X15b1PUG/jJac1QcISTYuFXNQl8A1y2GVvcxTc8lBRJAMe+b8ac7Evsvyr9gpMa4Z3w==
+
 "@babel/code-frame@^7.0.0", "@babel/code-frame@^7.12.13", "@babel/code-frame@^7.24.7", "@babel/code-frame@^7.27.1":
   version "7.27.1"
   resolved "https://registry.npmjs.org/@babel/code-frame/-/code-frame-7.27.1.tgz"
@@ -5910,6 +5915,11 @@ react-native-mmkv@^3.3.3:
   version "3.3.3"
   resolved "https://registry.npmjs.org/react-native-mmkv/-/react-native-mmkv-3.3.3.tgz"
   integrity sha512-GMsfOmNzx0p5+CtrCFRVtpOOMYNJXuksBVARSQrCFaZwjUyHJdQzcN900GGaFFNTxw2fs8s5Xje//RDKj9+PZA==
+
+react-native-permissions@^5.4.2:
+  version "5.4.2"
+  resolved "https://registry.yarnpkg.com/react-native-permissions/-/react-native-permissions-5.4.2.tgz#206c0e440cff2ce047514995457bd73a9924fd8b"
+  integrity sha512-XNMoG1fxrB9q73MLn/ZfTaP7pS8qPu0KWypbeFKVTvoR+JJ3O7uedMOTH/mts9bTG+GKhShOoZ+k0CR63q9jwA==
 
 react-native-reanimated-skeleton@^1.6.0:
   version "1.6.0"
