@@ -19,7 +19,7 @@ Process: 0%
 
 ## 📦 Deliverables
 
-- Reports/Analytics screens in mobile app (RN/Expo) with performant selectors.
+- Reports/Analytics screens in mobile app (React Native) with performant selectors.
 - Memoized queries over local DB (WatermelonDB) for month, YTD, and comparison.
 - Charts: daily heatmap, monthly bar/line, category share donut for comparison.
 - CSV export for comparison results (period vs period, category vs category).
@@ -37,7 +37,7 @@ Process: 0%
 
 ---
 
-## 📱 Mobile (RN/Expo) — Reports/Analytics
+## 📱 Mobile (React Native) — Reports/Analytics
 
 ### 0) Foundation
 

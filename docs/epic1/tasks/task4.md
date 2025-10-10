@@ -47,7 +47,7 @@ High
 ## Libraries to Install
 
 - `zustand` (existing; add slices for drafts and transaction management)
-- `expo-haptics` (optional; pressed feedback in keypad/chips)
+- `react-native-haptic-feedback` (optional; pressed feedback in keypad/chips)
 - `@react-native-community/datetimepicker` (date selection)
 - Toast solution: reuse existing, or add `react-native-toast-message` (optional)
 
@@ -189,7 +189,7 @@ High
 ### Phase 1: Scaffolding & Core UI ✅
 
 1.  **Install Dependencies**: Add the required libraries.
-    *   ✅ `yarn add @react-native-community/datetimepicker @react-native-community/netinfo react-native-toast-message expo-haptics`
+    *   ✅ `yarn add @react-native-community/datetimepicker @react-native-community/netinfo react-native-toast-message react-native-haptic-feedback`
 2.  **Create Files**: Scaffold the new screens and components.
     *   **Screens**:
         *   ✅ `app/screens/QuickAddScreen.tsx`

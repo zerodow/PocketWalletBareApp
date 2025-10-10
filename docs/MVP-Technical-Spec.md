@@ -6,18 +6,19 @@ _Free Tier Implementation Guide_
 
 ### Frontend (React Native)
 
-- **React Native** - Latest stable version for cross-platform mobile
-- **Expo SDK** - Latest version for rapid development and deployment
+- **React Native** - v0.81.4 (bare workflow) for cross-platform mobile
+- **React** - v19.1.0
 - **TypeScript** - Type safety throughout the application
-- **Zustand** - Lightweight state management solution
-- **WatermelonDB** - Reactive offline-first database
-- **React Navigation** - Standard navigation library
-- **Native Components** - Built-in UI components only (no third-party UI libs)
+- **Zustand** - Lightweight state management solution with MMKV persistence
+- **WatermelonDB** - Reactive offline-first database with JSI-enabled SQLite
+- **React Navigation** - v7 (native-stack + bottom-tabs)
+- **MMKV** - Fast, encrypted on-device storage
+- **Native Components** - Built-in UI components with custom theme system
 
 ### Infrastructure (Free Tier)
 
-- **Expo Platform** - Mobile development and deployment
-- **Local Storage** - Device-based data storage with WatermelonDB
+- **React Native CLI** - Native build tooling for iOS and Android
+- **Local Storage** - Device-based data storage with WatermelonDB + MMKV
 - **Future Sync Infrastructure** - Placeholder for optional server synchronization
 
 ## ðŸ—ï¸ Architecture Decisions
@@ -65,8 +66,8 @@ src/
 
 ### Security Implementation
 
-- **Local Authentication**: Device-based authentication with secure local storage
-- **Data Encryption**: Expo SecureStore for sensitive local data
+- **Local Authentication**: Device-based authentication with MMKV encrypted storage
+- **Data Encryption**: MMKV encryption for sensitive local data
 - **Privacy First**: All data remains local unless user explicitly chooses to sync
 - **File Security**: Local file operations with proper validation
 
@@ -86,11 +87,43 @@ src/
 - **Privacy-Focused** - Minimal data collection, maximum user control
 - **Backward Compatible** - Local-first app continues working without server
 
+### Voice Input API (Post-MVP)
+
+**Endpoint:** `POST /api/v1/speech-to-text`
+
+**Purpose:** Convert audio recordings to text for transaction entry using Google Cloud Speech-to-Text
+
+**Request:**
+- Content-Type: multipart/form-data
+- Body: audio file (.m4a, .wav, .mp3, .aac), language code (vi-VN)
+- Max file size: 10MB
+- Max duration: 30 seconds
+
+**Response:**
+- Success: transcript text, confidence score, language detected
+- Errors: AUDIO_TOO_LARGE, INVALID_FORMAT, TRANSCRIPTION_FAILED, RATE_LIMIT_EXCEEDED
+
+**Implementation:**
+- Node.js/Express with Multer for file uploads
+- Google Cloud Speech-to-Text API integration
+- Audio files temporarily stored, deleted after processing
+- Rate limiting: 100 requests/user/day
+
+**Privacy & Security:**
+- Audio temporarily uploaded to backend server
+- Processed by Google Cloud Speech-to-Text API
+- No long-term storage of audio files
+- Requires explicit user consent before first use
+- Users can disable feature in Settings
+
+**Cost:** ~$2-4/month for 1000 voice transactions (after 60 min free tier)
+
 ### Future Services
 
 - **Optional Sync Service** - Background data synchronization when requested
 - **Backup Service** - User-controlled data backup and restore
 - **Export Service** - Server-side data export and sharing
+- **Voice-to-Text Service** - Speech recognition for quick transaction entry (Post-MVP)
 
 ## ðŸ—„ï¸ Local Database Design
 
@@ -145,14 +178,15 @@ src/
 
 ### Development Environment
 
-- **Local Development** - Expo development server with hot reload
-- **Local Database** - WatermelonDB with device storage
+- **Local Development** - Metro bundler with fast refresh
+- **Local Database** - WatermelonDB with JSI-enabled SQLite
 - **Local Testing** - All functionality works offline
-- **Device Testing** - Physical devices and simulators
+- **Device Testing** - Physical devices and simulators (iOS/Android)
 
 ### Production Deployment
 
-- **Mobile Only** - Expo EAS builds for app store distribution
+- **Mobile Only** - Native builds for app store distribution (iOS/Android)
+- **Build System** - React Native CLI with CocoaPods (iOS) and Gradle (Android)
 - **Local Storage** - All data remains on user device
 - **Offline-First** - No server dependencies
 - **Monitoring** - Local error tracking and performance monitoring
@@ -222,15 +256,15 @@ src/
 ### Free Tier Limitations
 
 - **MMKV Storage**: Local encrypted storage with no cloud dependencies
-- **Render.com**: 750 hours/month, sleeps after 15 minutes inactivity
-- **Expo**: 30 EAS builds/month
+- **Render.com**: 750 hours/month, sleeps after 15 minutes inactivity (when backend is added)
+- **Native Builds**: Manual builds via React Native CLI (no build service costs)
 
 ### Mitigation Strategies
 
 - **Database Size**: Efficient schema design, data archiving
-- **Server Sleep**: Accept cold starts or implement keep-alive
-- **Build Limits**: Maximize development builds, minimize EAS usage
-- **Storage**: Image compression, periodic cleanup
+- **Server Sleep**: Accept cold starts or implement keep-alive (when backend is added)
+- **Native Performance**: JSI-enabled WatermelonDB for optimal database performance
+- **Storage**: Image compression, periodic cleanup, MMKV for fast key-value operations
 
 ### Scaling Considerations
 

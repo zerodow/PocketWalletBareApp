@@ -74,7 +74,13 @@ Process: 0%
 
 ### 4) Quick Input Features (Priority)
 
-- [ ] **Voice Input for Transactions** - Record audio and auto-fill transaction data using speech-to-text
+- [ ] **Voice Input for Transactions** - Backend-powered speech-to-text using Google Cloud
+  - Record audio on device (react-native-audio-recorder-player)
+  - Upload to backend API endpoint
+  - Backend processes via Google Cloud Speech-to-Text API (~$2-4/month for 1000 transactions)
+  - Auto-fill transaction data from Vietnamese transcript
+  - Requires internet connectivity
+  - Explicit user consent required (audio sent to Google via backend)
 - [ ] **Image Import for Receipts** - Take photo/import receipt and extract transaction data using OCR
 - [ ] Smart parsing and category matching from voice/image input
 - [ ] Multi-modal input validation and editing capabilities

@@ -17,7 +17,7 @@ _Generated: 2025-09-17_
 
 ## 📦 Deliverables
 
-- Asset management screens in the mobile app (RN/Expo).
+- Asset management screens in the mobile app (React Native).
 - Logic for calculating Net Worth and Runway.
 - Charts: Asset allocation donut/pie chart.
 - A new "Assets" tab/section in the app's navigation.
@@ -35,7 +35,7 @@ _Generated: 2025-09-17_
 
 ---
 
-## 📱 Mobile (RN/Expo) — Asset Management
+## 📱 Mobile (React Native) — Asset Management
 
 ### 0) Foundation
 

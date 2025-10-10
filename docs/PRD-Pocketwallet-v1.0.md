@@ -119,8 +119,8 @@ Notes:
 
 ## 7) Architecture & APIs (MVP)
 
-**Frontend.** React Native (Expo), TypeScript, Zustand state, WatermelonDB offline store.
-**Backend.** Node.js + Express; MMKV local storage; Render hosting.
+**Frontend.** React Native v0.81.4 (bare workflow), React v19.1.0, TypeScript, Zustand state with MMKV persistence, WatermelonDB offline store with JSI-enabled SQLite.
+**Backend.** Node.js + Express; Render hosting (when sync is implemented).
 
 **Cloud sync scope (MVP).**
 
@@ -142,6 +142,8 @@ POST   /v1/categories               → create/update
 
 POST   /v1/splits                   → create split (total, peopleCount, title?)
 GET    /v1/splits/:id               → public read (no auth), returns perPerson
+
+POST   /v1/speech-to-text           → upload audio (multipart), return transcript (Post-MVP)
 ```
 
 **Sharing model (bill split).**
@@ -155,8 +157,8 @@ GET    /v1/splits/:id               → public read (no auth), returns perPerson
 
 **Data at rest.**
 
-- Local device: Expo SecureStore (encrypted); WatermelonDB stored in encrypted container.
-- Cloud DB: Postgres with AES‑256 transparent encryption (provider‑managed).
+- Local device: MMKV encrypted storage; WatermelonDB with JSI-enabled SQLite.
+- Cloud DB: Postgres with AES‑256 transparent encryption (provider‑managed, when implemented).
 
 **Data in transit.** TLS 1.3 for all API traffic; HSTS on backend.
 
@@ -212,7 +214,17 @@ GET    /v1/splits/:id               → public read (no auth), returns perPerson
 - **Privacy policy** shown at signup (plain language).
 - **DSR features (MVP+):** data export (CSV already), account deletion (request → purge within 30 days).
 - **Data retention:** local snapshots (2 copies) and server logs (30 days) — documented for users.
-- **Third‑party sharing:** none (no ads SDKs in MVP).
+- **Third‑party sharing:**
+  - MVP: none (no ads SDKs)
+  - Post-MVP Voice Input: Audio processed by Google Cloud Speech-to-Text (requires explicit consent)
+
+**Voice Input Privacy (Post-MVP):**
+- **Data Flow:** Device → Backend → Google Cloud Speech-to-Text → Backend → Device
+- **User Consent:** Explicit opt-in required before first use with clear disclosure
+- **Data Retention:** Audio files temporarily stored on backend, deleted immediately after transcription (within seconds)
+- **Third-Party Processing:** Google Cloud processes audio per their DPA (GDPR compliant)
+- **User Controls:** Can disable feature entirely in Settings, revoke consent anytime
+- **Compliance:** Meets Vietnam Decree 13/2023 requirements for sensitive personal data
 
 _(Note: consult legal guidance before public release; expand to GDPR later if targeting EU users.)_
 

@@ -35,7 +35,7 @@ Tab Click → Instant Skeleton → KPIs (50ms) → Charts (100ms)
 - react-native-reanimated-skeleton
 
 Notes:
-- Ensure Reanimated is configured (Babel plugin `react-native-reanimated/plugin` last in the list). Expo projects generally support this; verify in `babel.config.js`.
+- Ensure Reanimated is configured (Babel plugin `react-native-reanimated/plugin` last in the list). Verify in `babel.config.js`.
 - We already depend on `react-native-reanimated`.
 
 ## 🔧 Implementation Steps
@@ -360,7 +360,7 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
 - Maintains all existing functionality (pagination, infinite scroll, pull-to-refresh)
 
 ✅ **Technical Implementation**
-- **Library**: react-native-reanimated-skeleton + expo-linear-gradient
+- **Library**: react-native-reanimated-skeleton + react-native-linear-gradient
 - **Skeleton Components**: SkeletonBox, SkeletonLine, SkeletonCircle, KPICardSkeleton, ChartSkeleton
 - **Transaction Skeletons**: TransactionItemSkeleton, TransactionListSkeleton
 - **Progressive States**: skeleton → kpis → charts → complete (dashboard)

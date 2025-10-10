@@ -6,7 +6,7 @@ Set up the mobile app foundation with proper project structure, tooling, and err
 
 ## Tasks
 
-- [ ] Expo project (TS), ESLint/Prettier, absolute imports
+- [ ] React Native bare project (TS), ESLint/Prettier, absolute imports
 - [ ] Folder structure (components/screens/store/database/services/utils/types/navigation)
 - [ ] Error tracking (Sentry/Bugsnag) + minimal analytics events
 
