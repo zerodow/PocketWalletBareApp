@@ -1,7 +1,7 @@
 import { appSchema, tableSchema } from "@nozbe/watermelondb"
 
 export const schema = appSchema({
-  version: 6,
+  version: 7,
   tables: [
     tableSchema({
       name: "categories",
@@ -83,6 +83,7 @@ export const schema = appSchema({
         { name: "month", type: "number", isIndexed: true },
         { name: "budget_amount", type: "number" },
         { name: "currency_code", type: "string" },
+        { name: "reset_day", type: "number", isOptional: true }, // Day of month when budget period starts (1-31)
         { name: "created_at", type: "number" },
         { name: "updated_at", type: "number" },
       ],

@@ -8,6 +8,10 @@ import Transaction from '@/database/models/Transaction';
 import Category from '@/database/models/Category';
 import { statisticsService } from '@/services/statisticsService';
 import { budgetService } from '@/services/budgetService';
+import {
+  getBudgetPeriod,
+  getBudgetPeriodDateRange,
+} from '@/utils/budgetPeriod';
 
 interface TransactionItemData {
   id: string;
@@ -24,6 +28,7 @@ interface BudgetData {
   total: number;
   dailyBudget: number;
   daysLeft: number;
+  resetDay: number;
 }
 
 export interface TopCategoryData {
@@ -108,30 +113,45 @@ export const useHomeData = (): UseHomeDataReturn => {
       const balance = monthlyIncome - monthlyExpenses;
       setTotalBalance(balance);
 
-      // Get budget for current month from database
-      const currentYear = now.getFullYear();
-      const currentMonth = now.getMonth() + 1;
-      const monthlyBudget = await budgetService.getBudgetForMonth(
-        currentYear,
-        currentMonth,
-      );
-
+      // Get budget for current period (considers reset day)
+      const monthlyBudget = await budgetService.getBudgetForCurrentPeriod();
+      console.log('monthlyBudget', monthlyBudget);
       if (monthlyBudget) {
-        // Budget exists - calculate budget data
+        // Budget exists - calculate budget data based on reset day
         const budgetAmountInUnits = monthlyBudget.budgetAmount / 100; // Convert from minor units
-        const daysInMonth = new Date(
-          now.getFullYear(),
-          now.getMonth() + 1,
-          0,
-        ).getDate();
-        const currentDay = now.getDate();
-        const daysLeft = daysInMonth - currentDay;
+        const resetDay = monthlyBudget.resetDay || 1;
+
+        // Get budget period information
+        const budgetPeriod = getBudgetPeriod(now, resetDay);
+        const { startDate, endDate } = getBudgetPeriodDateRange(
+          budgetPeriod.year,
+          budgetPeriod.month,
+          resetDay,
+        );
+
+        // Calculate expenses for the budget period (not just calendar month)
+        const periodTransactions = await database
+          .get<Transaction>('transactions')
+          .query(
+            Q.where(
+              'occurred_at',
+              Q.between(startDate.getTime(), endDate.getTime()),
+            ),
+            Q.where('trashed_at', Q.eq(null)),
+          )
+          .fetch();
+
+        const periodExpenses =
+          periodTransactions
+            .filter(t => t.amountMinorUnits < 0)
+            .reduce((sum, t) => sum + Math.abs(t.amountMinorUnits), 0) / 100;
 
         setBudgetData({
-          spent: monthlyExpenses,
+          spent: periodExpenses,
           total: budgetAmountInUnits,
-          dailyBudget: budgetAmountInUnits / daysInMonth,
-          daysLeft: Math.max(0, daysLeft),
+          dailyBudget: budgetAmountInUnits / budgetPeriod.daysInPeriod,
+          daysLeft: budgetPeriod.daysRemaining,
+          resetDay: resetDay,
         });
       } else {
         // No budget set - set to null to show empty state
@@ -157,6 +177,8 @@ export const useHomeData = (): UseHomeDataReturn => {
 
       setRecentTransactions(todayTransactions);
 
+      const currentYear = now.getFullYear();
+      const currentMonth = now.getMonth() + 1;
       // Calculate top expense category
       try {
         // Ensure statistics are up-to-date before reading category stats

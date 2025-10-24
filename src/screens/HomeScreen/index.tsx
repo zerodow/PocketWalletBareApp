@@ -80,9 +80,9 @@ const HomeScreen = ({ navigation }: HomeScreenProps) => {
     setIsBudgetModalVisible(true);
   };
 
-  const handleSaveBudget = async (amount: number) => {
+  const handleSaveBudget = async (amount: number, resetDay: number) => {
     try {
-      await budgetService.setCurrentMonthBudget(amount, 'VND');
+      await budgetService.setBudgetForCurrentPeriod(amount, 'VND', resetDay);
       Toast.show({
         type: 'success',
         text1: translate('homeScreen.budgetSaved'),
@@ -215,6 +215,7 @@ const HomeScreen = ({ navigation }: HomeScreenProps) => {
         onClose={() => setIsBudgetModalVisible(false)}
         onSave={handleSaveBudget}
         initialAmount={budgetData?.total}
+        initialResetDay={budgetData?.resetDay}
       />
     </SafeAreaWrapper>
   );
