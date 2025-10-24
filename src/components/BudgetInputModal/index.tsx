@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   Modal,
   View,
@@ -7,11 +7,16 @@ import {
   Platform,
   TouchableWithoutFeedback,
   ScrollView,
+  FlatList,
+  Dimensions,
 } from 'react-native';
 import numeral from 'numeral';
 import { TextView, BaseButton, InputField } from '@/components';
 import { makeStyles } from '@/utils/makeStyles';
 import { translate } from '@/i18n/translate';
+
+const ITEM_WIDTH = 60;
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 interface BudgetInputModalProps {
   visible: boolean;
@@ -29,11 +34,27 @@ export const BudgetInputModal = ({
   initialResetDay,
 }: BudgetInputModalProps) => {
   const styles = useStyles();
+  const flatListRef = useRef<FlatList>(null);
   const [amount, setAmount] = useState(
     initialAmount ? initialAmount.toString() : '',
   );
   const [resetDay, setResetDay] = useState(initialResetDay || 1);
   const [error, setError] = useState('');
+
+  // Days array for the picker
+  const days = Array.from({ length: 31 }, (_, i) => i + 1);
+
+  // Scroll to selected day when modal opens or resetDay changes
+  useEffect(() => {
+    if (visible && flatListRef.current) {
+      setTimeout(() => {
+        flatListRef.current?.scrollToIndex({
+          index: resetDay - 1,
+          animated: true,
+        });
+      }, 100);
+    }
+  }, [visible, resetDay]);
 
   const handleAmountChange = (text: string) => {
     // Remove non-numeric characters except decimal point
@@ -67,6 +88,34 @@ export const BudgetInputModal = ({
     setAmount('');
     setError('');
     onClose();
+  };
+
+  // Handle scroll end to update selected day
+  const handleScrollEnd = (event: any) => {
+    const offsetX = event.nativeEvent.contentOffset.x;
+    const index = Math.round(offsetX / ITEM_WIDTH);
+    const newDay = Math.max(1, Math.min(31, index + 1));
+    if (newDay !== resetDay) {
+      setResetDay(newDay);
+    }
+  };
+
+  // Render individual day item
+  const renderDayItem = ({ item, index }: { item: number; index: number }) => {
+    const isSelected = item === resetDay;
+    return (
+      <View style={styles.dayItemContainer}>
+        <View style={[styles.dayItem, isSelected && styles.dayItemSelected]}>
+          <TextView
+            size={isSelected ? 'heading' : 'body'}
+            weight={isSelected ? 'bold' : 'medium'}
+            style={[styles.dayItemText, isSelected && styles.dayItemTextSelected]}
+          >
+            {item}
+          </TextView>
+        </View>
+      </View>
+    );
   };
 
   return (
@@ -128,29 +177,31 @@ export const BudgetInputModal = ({
                   <TextView size="caption" style={styles.resetDayDescription}>
                     {translate('homeScreen.budgetResetDayDescription')}
                   </TextView>
-                  <View style={styles.dayGrid}>
-                    {Array.from({ length: 31 }, (_, i) => i + 1).map((day) => (
-                      <TouchableOpacity
-                        key={day}
-                        style={[
-                          styles.dayButton,
-                          resetDay === day && styles.dayButtonSelected,
-                        ]}
-                        onPress={() => setResetDay(day)}
-                        activeOpacity={0.7}
-                      >
-                        <TextView
-                          size="body"
-                          weight="medium"
-                          style={[
-                            styles.dayButtonText,
-                            resetDay === day && styles.dayButtonTextSelected,
-                          ]}
-                        >
-                          {day}
-                        </TextView>
-                      </TouchableOpacity>
-                    ))}
+
+                  {/* Horizontal Day Picker */}
+                  <View style={styles.pickerContainer}>
+                    {/* Center indicator overlay */}
+                    <View style={styles.centerIndicator} pointerEvents="none">
+                      <View style={styles.centerHighlight} />
+                    </View>
+
+                    <FlatList
+                      ref={flatListRef}
+                      data={days}
+                      horizontal
+                      showsHorizontalScrollIndicator={false}
+                      snapToInterval={ITEM_WIDTH}
+                      decelerationRate="fast"
+                      onMomentumScrollEnd={handleScrollEnd}
+                      renderItem={renderDayItem}
+                      keyExtractor={(item) => item.toString()}
+                      contentContainerStyle={styles.pickerContent}
+                      getItemLayout={(data, index) => ({
+                        length: ITEM_WIDTH,
+                        offset: ITEM_WIDTH * index,
+                        index,
+                      })}
+                    />
                   </View>
                 </View>
 
@@ -241,32 +292,62 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing.xxs,
   },
 
-  dayGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: theme.spacing.xs,
+  pickerContainer: {
+    height: 80,
     marginTop: theme.spacing.sm,
+    position: 'relative',
+    overflow: 'hidden',
   },
 
-  dayButton: {
-    width: 42,
-    height: 42,
-    borderRadius: theme.radius.md,
-    backgroundColor: theme.colors.border,
-    justifyContent: 'center',
+  pickerContent: {
+    paddingHorizontal: (SCREEN_WIDTH * 0.9 - 32) / 2 - ITEM_WIDTH / 2, // Center first and last items
     alignItems: 'center',
   },
 
-  dayButtonSelected: {
-    backgroundColor: theme.colors.primary,
+  centerIndicator: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1,
   },
 
-  dayButtonText: {
-    color: theme.colors.text,
+  centerHighlight: {
+    width: ITEM_WIDTH + 8,
+    height: 60,
+    borderRadius: theme.radius.lg,
+    borderWidth: 2,
+    borderColor: theme.colors.primary,
+    backgroundColor: `${theme.colors.primary}15`,
   },
 
-  dayButtonTextSelected: {
-    color: theme.colors.onPrimary,
+  dayItemContainer: {
+    width: ITEM_WIDTH,
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 80,
+  },
+
+  dayItem: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: ITEM_WIDTH - 8,
+    height: 50,
+  },
+
+  dayItemSelected: {
+    // Selected style handled by centerHighlight
+  },
+
+  dayItemText: {
+    color: theme.colors.textDim,
+  },
+
+  dayItemTextSelected: {
+    color: theme.colors.primary,
   },
 
   label: {
