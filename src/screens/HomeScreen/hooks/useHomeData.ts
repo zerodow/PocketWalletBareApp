@@ -8,7 +8,10 @@ import Transaction from '@/database/models/Transaction';
 import Category from '@/database/models/Category';
 import { statisticsService } from '@/services/statisticsService';
 import { budgetService } from '@/services/budgetService';
-import { getBudgetPeriod, getBudgetPeriodDateRange } from '@/utils/budgetPeriod';
+import {
+  getBudgetPeriod,
+  getBudgetPeriodDateRange,
+} from '@/utils/budgetPeriod';
 
 interface TransactionItemData {
   id: string;
@@ -112,7 +115,7 @@ export const useHomeData = (): UseHomeDataReturn => {
 
       // Get budget for current period (considers reset day)
       const monthlyBudget = await budgetService.getBudgetForCurrentPeriod();
-
+      console.log('monthlyBudget', monthlyBudget);
       if (monthlyBudget) {
         // Budget exists - calculate budget data based on reset day
         const budgetAmountInUnits = monthlyBudget.budgetAmount / 100; // Convert from minor units
@@ -174,6 +177,8 @@ export const useHomeData = (): UseHomeDataReturn => {
 
       setRecentTransactions(todayTransactions);
 
+      const currentYear = now.getFullYear();
+      const currentMonth = now.getMonth() + 1;
       // Calculate top expense category
       try {
         // Ensure statistics are up-to-date before reading category stats

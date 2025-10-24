@@ -1,17 +1,27 @@
+// React
 import React, { useState, useRef, useEffect } from 'react';
+
+// React Native
 import {
   Modal,
   View,
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
-  TouchableWithoutFeedback,
   ScrollView,
   FlatList,
   Dimensions,
+  Pressable,
+  StyleSheet,
 } from 'react-native';
+
+// Third-party
 import numeral from 'numeral';
-import { TextView, BaseButton, InputField } from '@/components';
+
+// Components
+import { TextView, InputField } from '@/components';
+
+// Utilities
 import { makeStyles } from '@/utils/makeStyles';
 import { translate } from '@/i18n/translate';
 
@@ -101,7 +111,13 @@ export const BudgetInputModal = ({
   };
 
   // Render individual day item
-  const renderDayItem = ({ item, index }: { item: number; index: number }) => {
+  const renderDayItem = ({
+    item,
+    index: _index,
+  }: {
+    item: number;
+    index: number;
+  }) => {
     const isSelected = item === resetDay;
     return (
       <View style={styles.dayItemContainer}>
@@ -109,7 +125,10 @@ export const BudgetInputModal = ({
           <TextView
             size={isSelected ? 'heading' : 'body'}
             weight={isSelected ? 'bold' : 'medium'}
-            style={[styles.dayItemText, isSelected && styles.dayItemTextSelected]}
+            style={[
+              styles.dayItemText,
+              ...(isSelected ? [styles.dayItemTextSelected] : []),
+            ]}
           >
             {item}
           </TextView>
@@ -125,121 +144,125 @@ export const BudgetInputModal = ({
       animationType="fade"
       onRequestClose={handleClose}
     >
-      <TouchableWithoutFeedback onPress={handleClose}>
-        <View style={styles.overlay}>
-          <TouchableWithoutFeedback>
-            <KeyboardAvoidingView
-              behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-              style={styles.modalContainer}
-            >
-              <ScrollView style={styles.modalContent}>
-                {/* Header */}
-                <View style={styles.header}>
-                  <TextView size="title" weight="bold" style={styles.title}>
-                    {translate('homeScreen.budgetModalTitle')}
-                  </TextView>
-                  <TextView size="body" style={styles.description}>
-                    {translate('homeScreen.budgetModalDescription')}
-                  </TextView>
+      <View style={styles.overlay}>
+        {/* Backdrop pressable to close modal without intercepting inner scroll gestures */}
+        <Pressable style={StyleSheet.absoluteFill} onPress={handleClose} />
+
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          style={styles.modalContainer}
+        >
+          <ScrollView
+            style={styles.modalContent}
+            keyboardShouldPersistTaps="handled"
+            nestedScrollEnabled
+          >
+            {/* Header */}
+            <View style={styles.header}>
+              <TextView size="title" weight="bold" style={styles.title}>
+                {translate('homeScreen.budgetModalTitle')}
+              </TextView>
+              <TextView size="body" style={styles.description}>
+                {translate('homeScreen.budgetModalDescription')}
+              </TextView>
+            </View>
+
+            {/* Input Section */}
+            <View style={styles.inputSection}>
+              <TextView size="body" weight="medium" style={styles.label}>
+                {translate('homeScreen.budgetAmountLabel')}
+              </TextView>
+              <View style={styles.inputWrapper}>
+                <InputField
+                  value={formatAmountDisplay(amount)}
+                  onChangeText={handleAmountChange}
+                  placeholder={translate('homeScreen.budgetAmountPlaceholder')}
+                  keyboardType="numeric"
+                  autoFocus
+                  maxLength={15}
+                  style={styles.input}
+                />
+                {/* <TextView size="body" weight="medium" style={styles.currency}>
+                  VND
+                </TextView> */}
+              </View>
+              {error ? (
+                <TextView size="caption" style={styles.errorText}>
+                  {error}
+                </TextView>
+              ) : null}
+            </View>
+
+            {/* Reset Day Section */}
+            <View style={styles.resetDaySection}>
+              <TextView size="body" weight="medium" style={styles.label}>
+                {translate('homeScreen.budgetResetDayLabel')}
+              </TextView>
+              <TextView size="caption" style={styles.resetDayDescription}>
+                {translate('homeScreen.budgetResetDayDescription')}
+              </TextView>
+
+              {/* Horizontal Day Picker */}
+              <View style={styles.pickerContainer}>
+                {/* Center indicator overlay */}
+                <View style={styles.centerIndicator} pointerEvents="none">
+                  <View style={styles.centerHighlight} />
                 </View>
 
-                {/* Input Section */}
-                <View style={styles.inputSection}>
-                  <TextView size="body" weight="medium" style={styles.label}>
-                    {translate('homeScreen.budgetAmountLabel')}
-                  </TextView>
-                  <View style={styles.inputWrapper}>
-                    <InputField
-                      value={formatAmountDisplay(amount)}
-                      onChangeText={handleAmountChange}
-                      placeholder={translate('homeScreen.budgetAmountPlaceholder')}
-                      keyboardType="numeric"
-                      autoFocus
-                      maxLength={15}
-                      style={styles.input}
-                    />
-                    <TextView size="body" weight="medium" style={styles.currency}>
-                      VND
-                    </TextView>
-                  </View>
-                  {error ? (
-                    <TextView size="caption" style={styles.errorText}>
-                      {error}
-                    </TextView>
-                  ) : null}
-                </View>
+                <FlatList
+                  ref={flatListRef}
+                  data={days}
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  snapToInterval={ITEM_WIDTH}
+                  decelerationRate="fast"
+                  onMomentumScrollEnd={handleScrollEnd}
+                  renderItem={renderDayItem}
+                  keyExtractor={item => item.toString()}
+                  contentContainerStyle={styles.pickerContent}
+                  nestedScrollEnabled
+                  getItemLayout={(data, index) => ({
+                    length: ITEM_WIDTH,
+                    offset: ITEM_WIDTH * index,
+                    index,
+                  })}
+                />
+              </View>
+            </View>
 
-                {/* Reset Day Section */}
-                <View style={styles.resetDaySection}>
-                  <TextView size="body" weight="medium" style={styles.label}>
-                    {translate('homeScreen.budgetResetDayLabel')}
-                  </TextView>
-                  <TextView size="caption" style={styles.resetDayDescription}>
-                    {translate('homeScreen.budgetResetDayDescription')}
-                  </TextView>
+            {/* Action Buttons */}
+            <View style={styles.buttonRow}>
+              <TouchableOpacity
+                style={[styles.button, styles.cancelButton]}
+                onPress={handleClose}
+                activeOpacity={0.7}
+              >
+                <TextView
+                  size="body"
+                  weight="semiBold"
+                  style={styles.cancelButtonText}
+                >
+                  {translate('common.cancel')}
+                </TextView>
+              </TouchableOpacity>
 
-                  {/* Horizontal Day Picker */}
-                  <View style={styles.pickerContainer}>
-                    {/* Center indicator overlay */}
-                    <View style={styles.centerIndicator} pointerEvents="none">
-                      <View style={styles.centerHighlight} />
-                    </View>
-
-                    <FlatList
-                      ref={flatListRef}
-                      data={days}
-                      horizontal
-                      showsHorizontalScrollIndicator={false}
-                      snapToInterval={ITEM_WIDTH}
-                      decelerationRate="fast"
-                      onMomentumScrollEnd={handleScrollEnd}
-                      renderItem={renderDayItem}
-                      keyExtractor={(item) => item.toString()}
-                      contentContainerStyle={styles.pickerContent}
-                      getItemLayout={(data, index) => ({
-                        length: ITEM_WIDTH,
-                        offset: ITEM_WIDTH * index,
-                        index,
-                      })}
-                    />
-                  </View>
-                </View>
-
-                {/* Action Buttons */}
-                <View style={styles.buttonRow}>
-                  <TouchableOpacity
-                    style={[styles.button, styles.cancelButton]}
-                    onPress={handleClose}
-                    activeOpacity={0.7}
-                  >
-                    <TextView
-                      size="body"
-                      weight="semiBold"
-                      style={styles.cancelButtonText}
-                    >
-                      {translate('common.cancel')}
-                    </TextView>
-                  </TouchableOpacity>
-
-                  <TouchableOpacity
-                    style={[styles.button, styles.saveButton]}
-                    onPress={handleSave}
-                    activeOpacity={0.7}
-                  >
-                    <TextView
-                      size="body"
-                      weight="semiBold"
-                      style={styles.saveButtonText}
-                    >
-                      {translate('homeScreen.saveBudget')}
-                    </TextView>
-                  </TouchableOpacity>
-                </View>
-              </ScrollView>
-            </KeyboardAvoidingView>
-          </TouchableWithoutFeedback>
-        </View>
-      </TouchableWithoutFeedback>
+              <TouchableOpacity
+                style={[styles.button, styles.saveButton]}
+                onPress={handleSave}
+                activeOpacity={0.7}
+              >
+                <TextView
+                  size="body"
+                  weight="semiBold"
+                  style={styles.saveButtonText}
+                >
+                  {translate('homeScreen.saveBudget')}
+                </TextView>
+              </TouchableOpacity>
+            </View>
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </View>
     </Modal>
   );
 };
