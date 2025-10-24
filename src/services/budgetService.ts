@@ -1,12 +1,14 @@
 import { Q } from "@nozbe/watermelondb"
 import { database } from "@/database"
 import MonthlyBudget from "@/database/models/MonthlyBudget"
+import { getBudgetPeriod } from "@/utils/budgetPeriod"
 
 export interface BudgetData {
   year: number
   month: number
   budgetAmount: number
   currencyCode: string
+  resetDay?: number
 }
 
 /**
@@ -38,6 +40,7 @@ export const budgetService = {
     month: number,
     amount: number,
     currencyCode: string = "VND",
+    resetDay: number = 1,
   ): Promise<MonthlyBudget> {
     try {
       // Check if budget already exists
@@ -49,6 +52,7 @@ export const budgetService = {
           return await existingBudget.update((budget) => {
             budget.budgetAmount = amount
             budget.currencyCode = currencyCode
+            budget.resetDay = resetDay
           })
         })
       } else {
@@ -60,6 +64,7 @@ export const budgetService = {
             budget.month = month
             budget.budgetAmount = amount
             budget.currencyCode = currencyCode
+            budget.resetDay = resetDay
           })
         })
       }
@@ -87,7 +92,7 @@ export const budgetService = {
   },
 
   /**
-   * Get budget for current month
+   * Get budget for current month (calendar month)
    */
   async getCurrentMonthBudget(): Promise<MonthlyBudget | null> {
     const now = new Date()
@@ -98,13 +103,61 @@ export const budgetService = {
   },
 
   /**
-   * Set budget for current month
+   * Set budget for current month (calendar month)
    */
-  async setCurrentMonthBudget(amount: number, currencyCode: string = "VND"): Promise<MonthlyBudget> {
+  async setCurrentMonthBudget(
+    amount: number,
+    currencyCode: string = "VND",
+    resetDay: number = 1,
+  ): Promise<MonthlyBudget> {
     const now = new Date()
     const year = now.getFullYear()
     const month = now.getMonth() + 1
 
-    return await this.setBudgetForMonth(year, month, amount, currencyCode)
+    return await this.setBudgetForMonth(year, month, amount, currencyCode, resetDay)
+  },
+
+  /**
+   * Get budget for the current budget period based on reset day
+   * This is the budget that should be displayed to the user right now
+   *
+   * @param resetDay - Day of month when budget period starts (1-31, defaults to 1)
+   * @returns The budget for the current period, or null if not set
+   *
+   * @example
+   * // If today is Oct 20 and resetDay is 25:
+   * // Returns the budget for September (Sept 25 - Oct 24 period)
+   */
+  async getBudgetForCurrentPeriod(resetDay?: number): Promise<MonthlyBudget | null> {
+    try {
+      // If no reset day specified, try to get from current month's budget
+      if (!resetDay) {
+        const currentBudget = await this.getCurrentMonthBudget()
+        resetDay = currentBudget?.resetDay || 1
+      }
+
+      const period = getBudgetPeriod(new Date(), resetDay)
+      return await this.getBudgetForMonth(period.year, period.month)
+    } catch (error) {
+      console.error("Failed to get budget for current period:", error)
+      return null
+    }
+  },
+
+  /**
+   * Set budget for the current budget period
+   * This creates/updates the budget for the period we're currently in
+   *
+   * @param amount - Budget amount in minor units
+   * @param currencyCode - Currency code (default: VND)
+   * @param resetDay - Day of month when budget period starts (default: 1)
+   */
+  async setBudgetForCurrentPeriod(
+    amount: number,
+    currencyCode: string = "VND",
+    resetDay: number = 1,
+  ): Promise<MonthlyBudget> {
+    const period = getBudgetPeriod(new Date(), resetDay)
+    return await this.setBudgetForMonth(period.year, period.month, amount, currencyCode, resetDay)
   },
 }

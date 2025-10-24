@@ -6,6 +6,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   TouchableWithoutFeedback,
+  ScrollView,
 } from 'react-native';
 import numeral from 'numeral';
 import { TextView, BaseButton, InputField } from '@/components';
@@ -15,8 +16,9 @@ import { translate } from '@/i18n/translate';
 interface BudgetInputModalProps {
   visible: boolean;
   onClose: () => void;
-  onSave: (amount: number) => void;
+  onSave: (amount: number, resetDay: number) => void;
   initialAmount?: number;
+  initialResetDay?: number;
 }
 
 export const BudgetInputModal = ({
@@ -24,11 +26,13 @@ export const BudgetInputModal = ({
   onClose,
   onSave,
   initialAmount,
+  initialResetDay,
 }: BudgetInputModalProps) => {
   const styles = useStyles();
   const [amount, setAmount] = useState(
     initialAmount ? initialAmount.toString() : '',
   );
+  const [resetDay, setResetDay] = useState(initialResetDay || 1);
   const [error, setError] = useState('');
 
   const handleAmountChange = (text: string) => {
@@ -53,8 +57,9 @@ export const BudgetInputModal = ({
     }
 
     // Convert to minor units (multiply by 100 for VND)
-    onSave(numericAmount * 100);
+    onSave(numericAmount * 100, resetDay);
     setAmount('');
+    setResetDay(1);
     onClose();
   };
 
@@ -78,7 +83,7 @@ export const BudgetInputModal = ({
               behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
               style={styles.modalContainer}
             >
-              <View style={styles.modalContent}>
+              <ScrollView style={styles.modalContent}>
                 {/* Header */}
                 <View style={styles.header}>
                   <TextView size="title" weight="bold" style={styles.title}>
@@ -115,6 +120,40 @@ export const BudgetInputModal = ({
                   ) : null}
                 </View>
 
+                {/* Reset Day Section */}
+                <View style={styles.resetDaySection}>
+                  <TextView size="body" weight="medium" style={styles.label}>
+                    {translate('homeScreen.budgetResetDayLabel')}
+                  </TextView>
+                  <TextView size="caption" style={styles.resetDayDescription}>
+                    {translate('homeScreen.budgetResetDayDescription')}
+                  </TextView>
+                  <View style={styles.dayGrid}>
+                    {Array.from({ length: 31 }, (_, i) => i + 1).map((day) => (
+                      <TouchableOpacity
+                        key={day}
+                        style={[
+                          styles.dayButton,
+                          resetDay === day && styles.dayButtonSelected,
+                        ]}
+                        onPress={() => setResetDay(day)}
+                        activeOpacity={0.7}
+                      >
+                        <TextView
+                          size="body"
+                          weight="medium"
+                          style={[
+                            styles.dayButtonText,
+                            resetDay === day && styles.dayButtonTextSelected,
+                          ]}
+                        >
+                          {day}
+                        </TextView>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                </View>
+
                 {/* Action Buttons */}
                 <View style={styles.buttonRow}>
                   <TouchableOpacity
@@ -145,7 +184,7 @@ export const BudgetInputModal = ({
                     </TextView>
                   </TouchableOpacity>
                 </View>
-              </View>
+              </ScrollView>
             </KeyboardAvoidingView>
           </TouchableWithoutFeedback>
         </View>
@@ -190,6 +229,44 @@ const useStyles = makeStyles(theme => ({
 
   inputSection: {
     marginBottom: theme.spacing.lg,
+  },
+
+  resetDaySection: {
+    marginBottom: theme.spacing.lg,
+  },
+
+  resetDayDescription: {
+    color: theme.colors.textDim,
+    marginBottom: theme.spacing.md,
+    marginTop: theme.spacing.xxs,
+  },
+
+  dayGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: theme.spacing.xs,
+    marginTop: theme.spacing.sm,
+  },
+
+  dayButton: {
+    width: 42,
+    height: 42,
+    borderRadius: theme.radius.md,
+    backgroundColor: theme.colors.border,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  dayButtonSelected: {
+    backgroundColor: theme.colors.primary,
+  },
+
+  dayButtonText: {
+    color: theme.colors.text,
+  },
+
+  dayButtonTextSelected: {
+    color: theme.colors.onPrimary,
   },
 
   label: {

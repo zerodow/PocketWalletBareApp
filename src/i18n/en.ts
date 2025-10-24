@@ -79,6 +79,8 @@ const en = {
     budgetAmountLabel: 'Budget Amount',
     budgetAmountPlaceholder: 'Enter amount',
     budgetAmountRequired: 'Please enter a valid budget amount',
+    budgetResetDayLabel: 'Budget Reset Day',
+    budgetResetDayDescription: 'Select the day of the month when your budget period should start (e.g., payday)',
     saveBudget: 'Save Budget',
     savings: 'Savings',
     overBudget: 'Over budget',

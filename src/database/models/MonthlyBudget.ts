@@ -8,6 +8,7 @@ export default class MonthlyBudget extends Model {
   @field("month") month!: number
   @field("budget_amount") budgetAmount!: number
   @field("currency_code") currencyCode!: string
+  @field("reset_day") resetDay!: number // Day of month when budget period starts (1-31)
   @date("created_at") createdAt!: Date
   @date("updated_at") updatedAt!: Date
 

@@ -106,5 +106,17 @@ export const migrations = schemaMigrations({
         }),
       ],
     },
+    {
+      toVersion: 7,
+      steps: [
+        {
+          type: "add_columns",
+          table: "monthly_budgets",
+          columns: [
+            { name: "reset_day", type: "number", isOptional: true },
+          ],
+        },
+      ],
+    },
   ],
 })

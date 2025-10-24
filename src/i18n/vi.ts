@@ -79,6 +79,8 @@ const vi = {
     budgetAmountLabel: 'Số Tiền Ngân Sách',
     budgetAmountPlaceholder: 'Nhập số tiền',
     budgetAmountRequired: 'Vui lòng nhập số tiền ngân sách hợp lệ',
+    budgetResetDayLabel: 'Ngày Đặt Lại Ngân Sách',
+    budgetResetDayDescription: 'Chọn ngày trong tháng mà chu kỳ ngân sách của bạn sẽ bắt đầu (ví dụ: ngày nhận lương)',
     saveBudget: 'Lưu Ngân Sách',
     savings: 'Tiết kiệm',
     overBudget: 'Vượt ngân sách',
